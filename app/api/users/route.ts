@@ -2,7 +2,7 @@ import { prisma } from '@/config';
 import { NextRequest } from 'next/server';
 import { POSTUsersRequest } from '@/types/api';
 import { User } from '@prisma/client';
-import { APIHelper } from '@/utils/helpers';
+import { APIUtils } from '@/utils';
 import bcrypt from 'bcryptjs';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
@@ -24,10 +24,10 @@ export async function POST(req: NextRequest) {
             },
         });
 
-        return APIHelper.createNextResponse({ success: true, status: 201, payload: user });
-    } catch (error) {
+        return APIUtils.createNextResponse({ success: true, status: 201, payload: user });
+    } catch (error: any) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-            return APIHelper.createNextResponse({ success: false, status: 409, message: 'Resource Already Exists' });
+            return APIUtils.createNextResponse({ success: false, status: 409, message: 'Resource Already Exists' });
         }
     }
 }

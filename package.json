@@ -11,14 +11,23 @@
     "dependencies": {
         "@prisma/client": "^5.22.0",
         "@prisma/studio": "^0.503.0",
+        "@radix-ui/colors": "^3.0.0",
+        "@radix-ui/react-label": "^2.1.0",
+        "@radix-ui/react-slot": "^1.1.0",
         "@supabase/supabase-js": "^2.46.1",
         "@types/bcryptjs": "^2.4.6",
+        "@types/dockerode": "^3.3.32",
         "bcryptjs": "^2.4.3",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "dockerode": "^4.0.2",
         "jose": "^5.9.6",
         "next": "15.0.3",
         "prisma": "^5.22.0",
         "react": "19.0.0-rc-66855b96-20241106",
         "react-dom": "19.0.0-rc-66855b96-20241106",
+        "tailwind-merge": "^2.5.5",
+        "tailwindcss-animate": "^1.0.7",
         "uuid": "^11.0.3",
         "zod": "^3.23.8"
     },
@@ -26,10 +35,9 @@
         "@types/node": "^20",
         "@types/react": "^18",
         "@types/react-dom": "^18",
+        "autoprefixer": "^10.4.20",
         "eslint": "^8",
         "eslint-config-next": "15.0.3",
-        "postcss": "^8",
-        "tailwindcss": "^3.4.1",
         "typescript": "^5"
     }
 }
