@@ -45,8 +45,8 @@ export const SessionProvider: React.FC<{
             const { accessToken, user: userResponse } = response.data.payload;
             axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-            setSession({ accessToken, isLoggedIn: true });
             if (!user) setUser(userResponse);
+            setSession({ accessToken, isLoggedIn: true });
         } finally {
             setIsLoading(false);
         }
@@ -59,8 +59,8 @@ export const SessionProvider: React.FC<{
             const { accessToken, user: userResponse } = response.data.payload;
             axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-            setSession({ accessToken, isLoggedIn: true });
             if (!user) setUser(userResponse);
+            setSession({ accessToken, isLoggedIn: true });
         } finally {
             setIsLoading(false);
         }
@@ -71,8 +71,8 @@ export const SessionProvider: React.FC<{
             setIsLoading(true);
             await axios.delete('/api/sessions');
 
-            setSession({ accessToken: null, isLoggedIn: null });
             setUser(null);
+            setSession({ accessToken: null, isLoggedIn: null });
             delete axios.defaults.headers.common['Authorization'];
         } finally {
             setIsLoading(false);

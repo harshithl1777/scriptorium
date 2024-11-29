@@ -8,6 +8,7 @@ import { UserProvider } from '@/lib/UserProvider';
 import { SessionProvider } from '@/lib/SessionProvider';
 import Gateway from '@/components/Gateway';
 import Protected from '@/components/Protected';
+import Layout from '@/components/Layout';
 
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -38,10 +39,62 @@ function App() {
                                 }
                             />
                             <Route
-                                path='/app/library'
+                                path='/app/templates'
                                 element={
                                     <Protected>
-                                        <div>Library</div>
+                                        <Layout names={['Templates']} links={['/app/templates']}>
+                                            <div>Templates</div>
+                                        </Layout>
+                                    </Protected>
+                                }
+                            />
+                            <Route
+                                path='/app/blogs'
+                                element={
+                                    <Protected>
+                                        <Layout names={['Blogs']} links={['/app/blogs']}>
+                                            <div>Blogs</div>
+                                        </Layout>
+                                    </Protected>
+                                }
+                            />
+                            <Route
+                                path='/app/search'
+                                element={
+                                    <Protected>
+                                        <Layout names={['Search']} links={['/app/search']}>
+                                            <div>Search</div>
+                                        </Layout>
+                                    </Protected>
+                                }
+                            />
+                            <Route
+                                path='/account/profile'
+                                element={
+                                    <Protected>
+                                        <Layout names={['Profile']} links={['/account/profile']}>
+                                            <div>Profile</div>
+                                        </Layout>
+                                    </Protected>
+                                }
+                            />
+                            <Route
+                                path='/account/reports'
+                                element={
+                                    <Protected>
+                                        <Layout names={['Reports']} links={['/account/Reports']}>
+                                            <div>Reports</div>
+                                        </Layout>
+                                    </Protected>
+                                }
+                            />
+                            <Route
+                                path='/account/developer'
+                                element={
+                                    <Protected>
+                                        <Layout names={['Developer Mode']} links={['/account/developer']}>
+                                            <div>Developer Mode</div>
+                                        </Layout>
                                     </Protected>
                                 }
                             />

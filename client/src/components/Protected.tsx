@@ -10,16 +10,17 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const { pathname } = useLocation();
     const { session, isLoading, getSession } = useSession();
-    const [showLoader, setShowLoader] = useState(false);
+    const [showLoader, setShowLoader] = useState(true);
 
     useEffect(() => {
         if (session === null) {
-            setShowLoader(true);
             getSession().then(() => {
                 setTimeout(() => setShowLoader(false), 1000);
             });
+        } else {
+            setShowLoader(false);
         }
-    }, []);
+    }, [session, getSession]);
 
     if (isLoading || showLoader) {
         return (

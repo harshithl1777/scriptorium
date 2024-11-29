@@ -9,9 +9,9 @@ interface GatewayProps {
 }
 
 const Gateway: React.FC<GatewayProps> = ({ children }) => {
-    const redirectURL = useQuery('redirect') || '/app/library';
+    const redirectURL = useQuery('redirect') || '/app/templates';
     const { session, isLoading, getSession } = useSession();
-    const [showLoader, setShowLoader] = useState(false);
+    const [showLoader, setShowLoader] = useState(true);
 
     useEffect(() => {
         if (session === null) {
@@ -19,6 +19,8 @@ const Gateway: React.FC<GatewayProps> = ({ children }) => {
             getSession().then(async () => {
                 setTimeout(() => setShowLoader(false), 1000);
             });
+        } else {
+            setShowLoader(false);
         }
     }, []);
 
