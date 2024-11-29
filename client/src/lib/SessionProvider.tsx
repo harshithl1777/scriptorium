@@ -31,7 +31,7 @@ export const SessionProvider: React.FC<{
             setIsLoading(true);
             await axios.get('/api/sessions', { withCredentials: true });
             await refreshSession();
-        } catch (error) {
+        } catch {
             setSession({ accessToken: null, isLoggedIn: false });
         } finally {
             setIsLoading(false);

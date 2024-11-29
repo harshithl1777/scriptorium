@@ -2,7 +2,6 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useSession } from '@/lib/SessionProvider';
 import { Loader2 } from 'lucide-react';
-import { useUser } from '@/lib/UserProvider';
 
 interface ProtectedRouteProps {
     children: ReactNode;
