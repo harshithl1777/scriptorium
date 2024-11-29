@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import LoginPage from '@/pages/LoginPage';
 import SignupPage from '@/pages/SignupPage';
+import Library from '@/pages/Library';
 import axios from 'axios';
 import { UserProvider } from '@/lib/UserProvider';
 import { SessionProvider } from '@/lib/SessionProvider';
@@ -41,6 +42,7 @@ function App() {
                             <Route
                                 path='/app/templates'
                                 element={
+<<<<<<< HEAD
                                     <Protected>
                                         <Layout names={['Templates']} links={['/app/templates']}>
                                             <div>Templates</div>
@@ -96,6 +98,11 @@ function App() {
                                             <div>Developer Mode</div>
                                         </Layout>
                                     </Protected>
+=======
+                                    // <Protected>
+                                        <Library />
+                                    // </Protected>
+>>>>>>> 348794ffa03d30145307beba8b86a06e5257632d
                                 }
                             />
                         </Routes>
