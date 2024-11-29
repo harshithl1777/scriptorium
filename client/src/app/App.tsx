@@ -42,7 +42,6 @@ function App() {
                             <Route
                                 path='/app/templates'
                                 element={
-<<<<<<< HEAD
                                     <Protected>
                                         <Layout names={['Templates']} links={['/app/templates']}>
                                             <div>Templates</div>
@@ -98,11 +97,6 @@ function App() {
                                             <div>Developer Mode</div>
                                         </Layout>
                                     </Protected>
-=======
-                                    // <Protected>
-                                        <Library />
-                                    // </Protected>
->>>>>>> 348794ffa03d30145307beba8b86a06e5257632d
                                 }
                             />
                         </Routes>
