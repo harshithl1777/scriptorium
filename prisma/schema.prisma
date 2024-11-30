@@ -26,8 +26,8 @@ model User {
 model CodeTemplate {
   id          Int            @id @default(autoincrement())
   title       String
-  explanation String
-  code        String
+  description String
+  code        String         @default("")
   language    String
   createdAt   DateTime       @default(now())
   author      User           @relation(fields: [authorId], references: [id])
@@ -43,7 +43,7 @@ model BlogPost {
   id          Int            @id @default(autoincrement())
   title       String
   description String
-  content     String
+  content     String         @default("")
   createdAt   DateTime       @default(now())
   author      User           @relation(fields: [authorId], references: [id])
   authorId    Int

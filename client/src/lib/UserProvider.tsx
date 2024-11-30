@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import axios from 'axios';
-import { CreateUserState, User } from '@/utils/types';
+import { BlogPost, CodeTemplate, CreateUserState, User } from '@/utils/types';
 
 type UserContextType = {
     user: User | null;
@@ -16,11 +16,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState<User | null>(null);
 
+    const formatData = (user: User) => {
+        const templates = user
+            ? user.templates.map((template: CodeTemplate) => ({
+                  ...template,
+                  type: 'Code Template',
+                  description: template.description,
+              }))
+            : [];
+
+        const posts = user ? user.blogPosts.map((post: BlogPost) => ({ ...post, type: 'Blog Post' })) : [];
+        user.resources = [...templates, ...posts];
+        return user;
+    };
+
     const getUserByID = async (id: number) => {
         try {
             setIsLoading(true);
             const response = await axios.get(`/api/users/${id}`);
-            setUser(response.data.payload);
+            setUser(formatData(response.data.payload));
             setIsLoading(false);
         } finally {
             setIsLoading(false);
@@ -31,7 +45,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             setIsLoading(true);
             const response = await axios.post(`/api/users`, { ...args });
-            setUser(response.data.payload);
+            setUser(formatData(response.data.payload));
             setIsLoading(false);
         } finally {
             setIsLoading(false);

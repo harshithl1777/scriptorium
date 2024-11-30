@@ -43,8 +43,6 @@ export async function middleware(req: NextRequest) {
 
     const response = NextResponse.next();
 
-    console.log(routeConfiguration.access);
-
     if ([USER, ADMIN].includes(routeConfiguration.access)) {
         const { success, payload } = await AuthorizationMiddleware(req);
         if (!success) {

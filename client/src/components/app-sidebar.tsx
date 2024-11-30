@@ -1,7 +1,16 @@
 'use client';
 
 import * as React from 'react';
-import { CircleUser, CodeSquareIcon, FlagIcon, HammerIcon, PenSquareIcon, SearchCodeIcon } from 'lucide-react';
+import {
+    CircleUser,
+    CodeSquareIcon,
+    FlagIcon,
+    HammerIcon,
+    LibrarySquare,
+    PenSquareIcon,
+    Search,
+    SearchCodeIcon,
+} from 'lucide-react';
 
 import { NavProjects } from '@/components/nav-projects';
 import { NavUser } from '@/components/nav-user';
@@ -12,19 +21,19 @@ import { useUser } from '@/lib/UserProvider';
 const data = {
     platform: [
         {
-            name: 'Templates',
-            url: '/app/templates',
-            icon: CodeSquareIcon,
+            name: 'Library',
+            url: '/app/library',
+            icon: LibrarySquare,
         },
         {
-            name: 'Blogs',
-            url: '/app/blogs',
-            icon: PenSquareIcon,
+            name: 'Editor',
+            url: '/app/editor',
+            icon: CodeSquareIcon,
         },
         {
             name: 'Search',
             url: '/app/search',
-            icon: SearchCodeIcon,
+            icon: Search,
         },
     ],
     account: [
@@ -34,14 +43,14 @@ const data = {
             icon: CircleUser,
         },
         {
-            name: 'Reports',
-            url: '/account/reports',
-            icon: FlagIcon,
-        },
-        {
             name: 'Developer Mode',
             url: '/account/developer',
             icon: HammerIcon,
+        },
+        {
+            name: 'Reports',
+            url: '/account/reports',
+            icon: FlagIcon,
         },
     ],
 };

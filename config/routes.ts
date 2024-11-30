@@ -168,6 +168,12 @@ const routesConfiguration: {
             schema: RunnersValidationSchema,
         },
     },
+    '/api/tags': {
+        GET: {
+            access: VISITOR,
+            schema: null,
+        },
+    },
 };
 
 export default routesConfiguration;

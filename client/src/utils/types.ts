@@ -1,4 +1,4 @@
-export type User = {
+export interface User {
     id: number;
     firstName: string;
     lastName: string;
@@ -9,28 +9,26 @@ export type User = {
     isAdmin: boolean;
     templates: CodeTemplate[];
     blogPosts: BlogPost[];
+    resources: (CodeTemplate | BlogPost)[];
     comments: Comment[];
     reports: Report[];
     UserVote: UserVote[];
-};
+}
 
-export type CodeTemplate = {
+export interface CodeTemplate {
     id: number;
     title: string;
-    explanation: string;
+    description: string;
     code: string;
     language: string;
     createdAt: Date;
     author: User;
     authorId: number;
-    forks: CodeTemplate[];
-    original?: CodeTemplate | null;
     originalId?: number | null;
-    blogPosts: BlogPost[];
     tags: Tag[];
-};
+}
 
-export type BlogPost = {
+export interface BlogPost {
     id: number;
     title: string;
     description: string;
@@ -45,16 +43,16 @@ export type BlogPost = {
     tags: Tag[];
     upvotes: number;
     downvotes: number;
-};
+}
 
-export type Tag = {
+export interface Tag {
     id: number;
     name: string;
     codeTemplates: CodeTemplate[];
     blogPosts: BlogPost[];
-};
+}
 
-export type Comment = {
+export interface Comment {
     id: number;
     content: string;
     createdAt: Date;
@@ -69,9 +67,9 @@ export type Comment = {
     isHidden: boolean;
     upvotes: number;
     downvotes: number;
-};
+}
 
-export type Report = {
+export interface Report {
     id: number;
     reason: string;
     createdAt: Date;
@@ -81,16 +79,16 @@ export type Report = {
     blogPostId?: number | null;
     comment?: Comment | null;
     commentId?: number | null;
-};
+}
 
-export type UserVote = {
+export interface UserVote {
     id: number;
     userId: number;
     targetId: number;
-    targetType: string;
-    voteType: string;
+    targetinterface: string;
+    voteinterface: string;
     user: User;
-};
+}
 
 export interface CreateUserState {
     firstName: string;
@@ -104,4 +102,11 @@ export interface CreateUserState {
 export interface CreateSessionState {
     email: string;
     password: string;
+}
+
+export interface CreateResourceState {
+    title: string;
+    description: string;
+    tags: string[];
+    language: string;
 }

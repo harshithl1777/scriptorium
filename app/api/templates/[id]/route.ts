@@ -73,14 +73,14 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const body = await req.json();
-    const { title, explanation, tags, code } = body;
+    const { title, description, tags, code } = body;
 
     try {
         const updatedTemplate = await prisma.codeTemplate.update({
             where: { id: templateId },
             data: {
                 title,
-                explanation,
+                description,
                 code,
                 tags: {
                     set: [],

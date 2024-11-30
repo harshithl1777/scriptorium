@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
         return APIUtils.createNextResponse({
             success: true,
             status: 200,
-            payload: { accessToken, user },
+            payload: { accessToken, userID: user.id },
         });
     } catch (error: any) {
         APIUtils.logError(error);
@@ -112,7 +112,7 @@ export async function PUT(req: NextRequest) {
         return APIUtils.createNextResponse({
             success: true,
             status: 200,
-            payload: { accessToken: newAccessToken, user },
+            payload: { accessToken: newAccessToken, userID: user.id },
         });
     } catch (error: any) {
         APIUtils.logError(error);

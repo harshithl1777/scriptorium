@@ -26,7 +26,7 @@ export default function Layout({ names, links, children }: { names: string[]; li
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className='hidden md:block'>
-                                    <Link to={links[0]} className='text-slate-400'>
+                                    <Link to={links[0]} className='text-slate-900 dark:text-slate-200 !ml-4'>
                                         {pathname.split('/')[2].at(0)?.toUpperCase() + pathname.split('/')[2].slice(1)}
                                     </Link>
                                 </BreadcrumbItem>

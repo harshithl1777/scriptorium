@@ -23,9 +23,9 @@ export const SessionsValidationSchema = z.object({
 });
 
 export const TemplatesValidationSchema = z.object({
-    title: z.string().min(3).max(100),
-    explanation: z.string().min(10).max(500),
-    code: z.string().min(1),
+    title: z.string().min(1).max(100),
+    description: z.string().min(1).max(500),
+    code: z.string().optional(),
     language: z.enum(['C', 'C++', 'Java', 'Python', 'JavaScript', 'Ruby', 'Go', 'PHP', 'Swift', 'Rust']).optional(),
 });
 
@@ -36,9 +36,9 @@ export const RunnersValidationSchema = z.object({
 });
 
 export const PostsValidationSchema = z.object({
-    title: z.string().min(3).max(100),
+    title: z.string().min(1).max(100),
     description: z.string().min(1).max(500),
-    content: z.string().min(5),
+    content: z.string().optional(),
 });
 
 export const CommentsValidationSchema = z.object({

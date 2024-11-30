@@ -9,16 +9,16 @@ export async function POST(req: NextRequest) {
     try {
         const {
             title,
-            explanation,
+            description,
             code,
             language = 'JavaScript',
             tags,
-        }: { title: string; explanation: string; code: string; language?: string; tags: string[] } = await req.json();
+        }: { title: string; description: string; code: string; language?: string; tags: string[] } = await req.json();
 
         const newTemplate = await prisma.codeTemplate.create({
             data: {
                 title,
-                explanation,
+                description,
                 code,
                 language,
                 author: { connect: { id: user.id } },
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
             title ? { title: { contains: title } } : {},
             content
                 ? {
-                      OR: [{ explanation: { contains: content } }, { code: { contains: content } }],
+                      OR: [{ description: { contains: content } }, { code: { contains: content } }],
                   }
                 : {},
             tags

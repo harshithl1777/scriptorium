@@ -22,7 +22,7 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 export const SessionProvider: React.FC<{
     children: React.ReactNode;
 }> = ({ children }) => {
-    const { user, setUser } = useUser();
+    const { user, setUser, getUserByID } = useUser();
     const [session, setSession] = useState<SessionState | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -42,10 +42,10 @@ export const SessionProvider: React.FC<{
         try {
             setIsLoading(true);
             const response = await axios.post('/api/sessions', { ...args });
-            const { accessToken, user: userResponse } = response.data.payload;
+            const { accessToken, userID } = response.data.payload;
             axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-            if (!user) setUser(userResponse);
+            if (!user) await getUserByID(userID);
             setSession({ accessToken, isLoggedIn: true });
         } finally {
             setIsLoading(false);
@@ -56,10 +56,10 @@ export const SessionProvider: React.FC<{
         try {
             setIsLoading(true);
             const response = await axios.put('/api/sessions', {}, { withCredentials: true });
-            const { accessToken, user: userResponse } = response.data.payload;
+            const { accessToken, userID } = response.data.payload;
             axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-            if (!user) setUser(userResponse);
+            if (!user) await getUserByID(userID);
             setSession({ accessToken, isLoggedIn: true });
         } finally {
             setIsLoading(false);

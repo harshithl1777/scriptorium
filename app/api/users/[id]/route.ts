@@ -23,9 +23,23 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
                 avatarURL: true,
                 phoneNumber: true,
                 isAdmin: true,
-                templates: true,
-                blogPosts: true,
-                comments: true,
+                templates: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        tags: true,
+                    },
+                },
+                blogPosts: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        content: true,
+                        tags: true,
+                    },
+                },
                 reports: true,
             },
         });

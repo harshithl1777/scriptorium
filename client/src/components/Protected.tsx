@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         } else {
             setShowLoader(false);
         }
-    }, [session, getSession]);
+    }, []);
 
     if (isLoading || showLoader) {
         return (

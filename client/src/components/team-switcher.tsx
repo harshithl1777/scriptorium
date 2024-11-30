@@ -14,7 +14,7 @@ export function TeamSwitcher() {
                             </div>
                             <div className='grid flex-1 text-left text-sm leading-tight'>
                                 <span className='truncate font-semibold'>Blaze</span>
-                                <span className='truncate text-xs'>CS Redefined</span>
+                                <span className='truncate text-xs'>Learning Redefined</span>
                             </div>
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
