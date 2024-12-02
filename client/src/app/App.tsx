@@ -17,6 +17,7 @@ import CodeEditorPage from '@/pages/CodeEditorPage';
 import { SiteProvider } from '@/lib/SiteProvider';
 import MarkdownEditorPage from '@/pages/MarkdownEditorPage';
 import PostsPage from '@/pages/PostsPage';
+import PostsSearchPage from '@/pages/PostsSearchPage';
 
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -31,7 +32,7 @@ function App() {
                             <TemplatesProvider>
                                 <Toaster />
                                 <TooltipProvider>
-                                    <BrowserRouter>
+                                    <Router>
                                         <Routes>
                                             <Route path='/' element={<div>Landing Page</div>} />
                                             <Route
@@ -48,6 +49,26 @@ function App() {
                                                     <Gateway>
                                                         <SignupPage />
                                                     </Gateway>
+                                                }
+                                            />
+                                            <Route
+                                                path='/app/posts/search'
+                                                element={
+                                                    <Protected>
+                                                        <Layout>
+                                                            <PostsSearchPage />
+                                                        </Layout>
+                                                    </Protected>
+                                                }
+                                            />
+                                            <Route
+                                                path='/app/templates/search'
+                                                element={
+                                                    <Protected>
+                                                        <Layout>
+                                                            <div>Templates Search</div>
+                                                        </Layout>
+                                                    </Protected>
                                                 }
                                             />
                                             <Route
@@ -91,42 +112,13 @@ function App() {
                                                 }
                                             />
                                             <Route path='/posts/:id' element={<PostsPage />} />
-                                            <Route
-                                                path='/app/blogs/search'
-                                                element={
-                                                    <Protected>
-                                                        <Layout>
-                                                            <div>Search</div>
-                                                        </Layout>
-                                                    </Protected>
-                                                }
-                                            />
+
                                             <Route
                                                 path='/account/profile'
                                                 element={
                                                     <Protected>
                                                         <Layout>
                                                             <div>Profile</div>
-                                                        </Layout>
-                                                    </Protected>
-                                                }
-                                            />
-                                            <Route
-                                                path='/account/reports'
-                                                element={
-                                                    <Protected>
-                                                        <Layout>
-                                                            <div>Reports</div>
-                                                        </Layout>
-                                                    </Protected>
-                                                }
-                                            />
-                                            <Route
-                                                path='/account/developer'
-                                                element={
-                                                    <Protected>
-                                                        <Layout>
-                                                            <div>Developer Mode</div>
                                                         </Layout>
                                                     </Protected>
                                                 }
@@ -159,7 +151,7 @@ function App() {
                                                 }
                                             />
                                         </Routes>
-                                    </BrowserRouter>
+                                    </Router>
                                 </TooltipProvider>
                             </TemplatesProvider>
                         </PostsProvider>

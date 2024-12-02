@@ -7,7 +7,7 @@ const LibraryPage = () => {
 
     useEffect(() => {
         updateBreadcrumbs([{ label: 'Library', path: '' }]);
-    });
+    }, []);
     return (
         <div className='ml-8 mr-8 space-y-6'>
             <LibraryTable />

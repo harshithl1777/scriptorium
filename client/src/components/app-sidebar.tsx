@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { CircleUser, CodeSquareIcon, FlagIcon, HammerIcon, LibrarySquare, PenSquareIcon, Search } from 'lucide-react';
+import { FlagIcon, LibrarySquare, Search, Code, PenLine } from 'lucide-react';
 
 import { NavProjects } from '@/components/nav-projects';
 import { NavUser } from '@/components/nav-user';
@@ -15,42 +15,23 @@ const data = {
             name: 'Library',
             url: '/app/library',
             icon: LibrarySquare,
-            items: [
-                {
-                    name: 'Code Editor',
-                    icon: CodeSquareIcon,
-                },
-                {
-                    name: 'Blog Editor',
-                    icon: PenSquareIcon,
-                },
-            ],
         },
         {
-            name: 'Search',
-            url: '/app/search',
-            icon: Search,
-            items: [],
+            name: 'Code Templates',
+            url: '/app/templates/search',
+            icon: Code,
+        },
+        {
+            name: 'Blog Posts',
+            url: '/app/posts/search',
+            icon: PenLine,
         },
     ],
-    account: [
-        {
-            name: 'Profile',
-            url: '/account/profile',
-            icon: CircleUser,
-            items: [],
-        },
-        {
-            name: 'Developer Mode',
-            url: '/account/developer',
-            icon: HammerIcon,
-            items: [],
-        },
+    admin: [
         {
             name: 'Reports',
             url: '/account/reports',
             icon: FlagIcon,
-            items: [],
         },
     ],
 };
@@ -64,7 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 <NavProjects platform={data.platform} name='Platform' />
-                <NavProjects platform={data.account} name='Account' />
+                {user!.isAdmin && <NavProjects platform={data.admin} name='Admin' />}
             </SidebarContent>
             <SidebarFooter>
                 <NavUser
