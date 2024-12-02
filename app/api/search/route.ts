@@ -1,5 +1,3 @@
-// app/api/search/route.ts
-
 import { NextRequest } from 'next/server';
 import { prisma } from '@/config';
 import { APIUtils } from '@/utils';
@@ -26,7 +24,7 @@ export async function GET(req: NextRequest) {
                           OR: [
                               { title: { contains: search } },
                               { content: { contains: search } },
-                              { explanation: { contains: search } },
+                              { description: { contains: search } },
                               { code: { contains: search } },
                           ],
                       }
@@ -62,8 +60,8 @@ export async function GET(req: NextRequest) {
             data.push(
                 ...blogs.map((post) => ({
                     ...post,
-                    resourceType: 'blog',
-                }))
+                    resourceType: 'Blog Post',
+                })),
             );
 
             totalResults += totalBlogs;
@@ -71,7 +69,10 @@ export async function GET(req: NextRequest) {
 
         // Fetch CodeTemplates
         if (type === 'template' || !type) {
-            const templateFilters = baseFilters;
+            const templateFilters = {
+                ...baseFilters,
+                AND: [...baseFilters.AND, { isHidden: false }],
+            };
 
             const totalTemplates = await prisma.codeTemplate.count({ where: templateFilters });
 
@@ -85,19 +86,15 @@ export async function GET(req: NextRequest) {
             data.push(
                 ...templates.map((template) => ({
                     ...template,
-                    resourceType: 'template',
-                }))
+                    resourceType: 'Code Template',
+                })),
             );
 
             totalResults += totalTemplates;
         }
 
-        // You can add more resources like Comments if needed
-
-        // Sort combined data (e.g., by creation date descending)
         data.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-        // Paginate the combined data
         const paginatedData = data.slice(0, limit);
 
         return APIUtils.createNextResponse({
@@ -117,7 +114,7 @@ export async function GET(req: NextRequest) {
         return APIUtils.createNextResponse({
             success: false,
             status: 500,
-            message: error.message || 'An error occurred during search.',
+            message: error.message,
         });
     }
 }

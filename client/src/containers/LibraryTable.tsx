@@ -57,8 +57,8 @@ import { Separator } from '@/components/ui/separator';
 import { generateEmptyStringObject } from '@/utils/common';
 import TagsSelector from '@/components/tags-selector';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useBlogPosts } from '@/lib/PostsProvider';
-import { useCodeTemplates } from '@/lib/TemplatesProvider';
+import { usePosts } from '@/lib/PostsProvider';
+import { useTemplates } from '@/lib/TemplatesProvider';
 import { useToast } from '@/hooks/use-toast';
 
 export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
@@ -90,7 +90,13 @@ export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
         cell: ({ row }) => (
             <div
                 className='hover:underline hover:underline-offset-4 hover:cursor-pointer'
-                onClick={() => window.open('/app/templates/' + row.original.id)}
+                onClick={() =>
+                    window.open(
+                        '/app/editor/' +
+                            (row.getValue('type') === 'Blog Post' ? 'posts/' : 'templates/') +
+                            row.original.id,
+                    )
+                }
             >
                 {row.getValue('title')}
             </div>
@@ -159,7 +165,11 @@ export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
                             className='hover:!bg-cyan-700 hover:pointer'
-                            onClick={() => window.open('/app/templates/' + resource.id)}
+                            onClick={() =>
+                                window.open(
+                                    (row.getValue('type') === 'Blog Post' ? '/posts/' : '/templates/') + resource.id,
+                                )
+                            }
                         >
                             <Eye />
                             Open preview
@@ -198,8 +208,8 @@ export function LibraryTable() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
     const { user, isLoading: usersLoading, getUserByID } = useUser();
-    const { isLoading: postsLoading, createBlogPost } = useBlogPosts();
-    const { isLoading: templatesLoading, createCodeTemplate } = useCodeTemplates();
+    const { isLoading: postsLoading, createPost } = usePosts();
+    const { isLoading: templatesLoading, createTemplate } = useTemplates();
     const { toast } = useToast();
 
     const [pageIndex, setPageIndex] = React.useState(0);
@@ -235,9 +245,9 @@ export function LibraryTable() {
     const handleCreateResourceFormSubmit = async () => {
         try {
             if (dialogState.type === 'Blog Post') {
-                await createBlogPost(createResourceFormState);
+                await createPost(createResourceFormState);
             } else {
-                await createCodeTemplate(createResourceFormState);
+                await createTemplate(createResourceFormState);
             }
             await getUserByID(user!.id);
             toast({

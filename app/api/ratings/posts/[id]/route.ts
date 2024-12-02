@@ -19,11 +19,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const body = await req.json();
     const { action } = body;
 
-    if (!['upvote', 'downvote'].includes(action)) {
+    if (!['upvote', 'downvote', 'deupvote', 'dedownvote'].includes(action)) {
         return APIUtils.createNextResponse({
             success: false,
             status: 400,
-            message: 'Invalid action. Use "upvote" or "downvote"',
+            message: 'Invalid action. Use "upvote", "downvote", "deupvote", or "dedownvote"',
         });
     }
 
@@ -37,6 +37,33 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
                 },
             },
         });
+
+        if (['deupvote', 'dedownvote'].includes(action)) {
+            const targetVoteType = action === 'deupvote' ? 'upvote' : 'downvote';
+
+            // If no existing vote or mismatched vote type, return error
+            if (!existingVote || existingVote.voteType !== targetVoteType) {
+                return APIUtils.createNextResponse({
+                    success: false,
+                    status: 400,
+                    message: `Cannot ${action} a post you haven't ${targetVoteType}d`,
+                });
+            }
+
+            // Delete the vote and decrement the corresponding field
+            await prisma.userVote.delete({ where: { id: existingVote.id } });
+
+            const decrementField = targetVoteType === 'upvote' ? 'upvotes' : 'downvotes';
+
+            const updatedPost = await prisma.blogPost.update({
+                where: { id: parseInt(id, 10) },
+                data: {
+                    [decrementField]: { decrement: 1 },
+                },
+            });
+
+            return APIUtils.createNextResponse({ success: true, status: 200, payload: updatedPost });
+        }
 
         if (existingVote) {
             if (existingVote.voteType === action) {

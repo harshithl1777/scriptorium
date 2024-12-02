@@ -13,7 +13,14 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
                 tags: true,
                 templates: true,
                 author: true,
-                comments: { orderBy: { upvotes: 'desc' } },
+                reports: true,
+                comments: {
+                    include: {
+                        author: true,
+                        reports: true,
+                    },
+                    orderBy: { upvotes: 'desc' },
+                },
             },
         });
 

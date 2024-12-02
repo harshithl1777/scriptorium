@@ -20,7 +20,6 @@ const unselectedTextColors = {
 
 const BgColors = {
     library: 'bg-cyan-600 hover:bg-cyan-600 dark:bg-cyan-500 dark:hover:bg-cyan-500',
-    editor: 'bg-sky-600 hover:bg-sky-600 dark:bg-sky-500 dark:hover:bg-sky-500',
     search: 'bg-violet-600 hover:bg-violet-600 dark:bg-violet-500 dark:hover:bg-violet-500',
     profile: 'bg-amber-600 hover:bg-amber-600 dark:bg-amber-500 dark:hover:bg-amber-500',
     developer: 'bg-orange-600 hover:bg-orange-600 dark:bg-orange-500 dark:hover:bg-orange-500',
@@ -29,7 +28,6 @@ const BgColors = {
 
 const BgColorsHover = {
     library: 'hover:bg-cyan-500/20',
-    editor: 'hover:bg-sky-500/10',
     search: 'hover:bg-violet-500/20',
     profile: 'hover:bg-amber-500/20',
     developer: 'hover:bg-orange-500/10',
@@ -44,6 +42,10 @@ export function NavProjects({
         name: string;
         url: string;
         icon: LucideIcon;
+        items: {
+            name: string;
+            icon: LucideIcon;
+        }[];
     }[];
     name: string;
 }) {
@@ -56,7 +58,6 @@ export function NavProjects({
                 {platform.map((item) => {
                     const name = item.name.toLowerCase().split(' ')[0] as
                         | 'library'
-                        | 'editor'
                         | 'search'
                         | 'profile'
                         | 'reports'
@@ -65,20 +66,28 @@ export function NavProjects({
                         <SidebarMenuItem key={item.name}>
                             <SidebarMenuButton
                                 asChild
-                                className={pathname.includes(name) ? BgColors[name] : BgColorsHover[name]}
+                                className={
+                                    pathname.includes(name) || (name === 'library' && pathname.includes('editor'))
+                                        ? BgColors[name]
+                                        : BgColorsHover[name]
+                                }
                             >
                                 <Link to={item.url}>
                                     <item.icon
                                         size={30}
                                         className={
-                                            pathname.includes(name) || pathname.includes(name.split(' ')[0])
+                                            pathname.includes(name) ||
+                                            pathname.includes(name.split(' ')[0]) ||
+                                            (name === 'library' && pathname.includes('editor'))
                                                 ? 'text-slate-100 dark:text-slate-900'
                                                 : unselectedTextColors[name]
                                         }
                                     />
                                     <span
                                         className={
-                                            pathname.includes(name) || pathname.includes(name.split(' ')[0])
+                                            pathname.includes(name) ||
+                                            pathname.includes(name.split(' ')[0]) ||
+                                            (name === 'library' && pathname.includes('editor'))
                                                 ? 'text-slate-100 dark:text-slate-900  font-medium'
                                                 : unselectedTextColors[name]
                                         }

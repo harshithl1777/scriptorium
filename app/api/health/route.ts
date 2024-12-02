@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
         const environment = process.env.NODE_ENV || 'unknown';
 
         const healthInfo = {
+            OS: `${os.type()} (${os.platform()}) version ${os.release()}`,
             uptime: `${Math.floor(uptime)}s`,
             freeMemory: `${(freeMemory / 1024 / 1024).toFixed(2)} MB`,
             totalMemory: `${(totalMemory / 1024 / 1024).toFixed(2)} MB`,

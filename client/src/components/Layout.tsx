@@ -1,21 +1,46 @@
 import { AppSidebar } from '@/components/app-sidebar';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ModeToggle } from './mode-toggle';
 import { Button } from './ui/button';
 import { Search } from 'lucide-react';
+import { useSite } from '@/lib/SiteProvider';
+import {
+    COriginal,
+    CplusplusOriginal,
+    GoOriginalWordmark,
+    JavaOriginal,
+    JavascriptOriginal,
+    PhpPlain,
+    PythonOriginal,
+    RubyOriginal,
+    SwiftOriginal,
+} from 'devicons-react';
+import MarkdownLight from '@/assets/images/MarkdownLight.svg';
+import MarkdownDark from '@/assets/images/MarkdownDark.svg';
+import Rust from '@/assets/images/Rust.svg';
+import { useTheme } from '@/lib/ThemeProvider';
 
-export default function Layout({ names, links, children }: { names: string[]; links: string[]; children: ReactNode }) {
-    const { pathname } = useLocation();
+export default function Layout({ children }: { children: ReactNode }) {
+    const { breadcrumbs } = useSite();
     const navigate = useNavigate();
+    const { theme } = useTheme();
+
+    const languageIconsMap = {
+        Python: <PythonOriginal size={24} />,
+        JavaScript: <JavascriptOriginal size={20} />,
+        Java: <JavaOriginal size={22} className='brightness-150' />,
+        Swift: <SwiftOriginal size={20} />,
+        C: <COriginal size={24} />,
+        'C++': <CplusplusOriginal size={24} />,
+        Rust: <img src={Rust} className='w-5 h-5' />,
+        Ruby: <RubyOriginal size={20} />,
+        Go: <GoOriginalWordmark size={30} />,
+        PHP: <PhpPlain size={30} />,
+        Markdown: theme === 'light' ? <img src={MarkdownLight} /> : <img src={MarkdownDark} />,
+    };
 
     return (
         <SidebarProvider>
@@ -25,19 +50,24 @@ export default function Layout({ names, links, children }: { names: string[]; li
                     <div className='flex items-center gap-2 px-4'>
                         <Breadcrumb>
                             <BreadcrumbList>
-                                <BreadcrumbItem className='hidden md:block'>
-                                    <Link to={links[0]} className='text-slate-900 dark:text-slate-200 !ml-4'>
-                                        {pathname.split('/')[2].at(0)?.toUpperCase() + pathname.split('/')[2].slice(1)}
-                                    </Link>
-                                </BreadcrumbItem>
-                                {names.length > 1 && (
-                                    <>
-                                        <BreadcrumbSeparator className='hidden md:block' />
-                                        <BreadcrumbItem>
-                                            <BreadcrumbPage>na</BreadcrumbPage>
+                                {breadcrumbs.map((breadcrumb, index) => (
+                                    <div key={breadcrumb.label} className='flex flex-row items-center gap-2'>
+                                        <BreadcrumbItem className='hidden md:block'>
+                                            {breadcrumb.path ? (
+                                                <Link
+                                                    to={breadcrumb.path}
+                                                    className='text-slate-900 dark:text-slate-200 flex flex-row items-center gap-2'
+                                                >
+                                                    {languageIconsMap[breadcrumb.language!]}
+                                                    {breadcrumb.label}
+                                                </Link>
+                                            ) : (
+                                                breadcrumb.label
+                                            )}
                                         </BreadcrumbItem>
-                                    </>
-                                )}
+                                        {index !== breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+                                    </div>
+                                ))}
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
@@ -49,7 +79,7 @@ export default function Layout({ names, links, children }: { names: string[]; li
                         <ModeToggle />
                     </div>
                 </header>
-                <div className='flex flex-1 flex-col gap-4 p-4 pt-0 bg-white dark:bg-[#111927]'>{children}</div>
+                <div className='flex flex-1 flex-col gap-4 pt-0 bg-white dark:bg-[#111927]'>{children}</div>
             </SidebarInset>
         </SidebarProvider>
     );

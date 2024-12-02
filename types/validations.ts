@@ -32,7 +32,7 @@ export const TemplatesValidationSchema = z.object({
 export const RunnersValidationSchema = z.object({
     code: z.string().min(1),
     language: z.enum(['C', 'C++', 'Java', 'Python', 'JavaScript', 'Ruby', 'Go', 'PHP', 'Swift', 'Rust']).optional(),
-    stdin: z.string().optional(),
+    stdin: z.array(z.string()).optional(),
 });
 
 export const PostsValidationSchema = z.object({
@@ -51,8 +51,9 @@ export const ReportsValidationSchema = z.object({
     reason: z.string().min(1),
     blogPostId: z.number().optional(),
     commentId: z.number().optional(),
+    targetType: z.enum(['post', 'comment']),
 });
 
 export const RatingsValidationSchema = z.object({
-    action: z.enum(['upvote', 'downvote']),
+    action: z.enum(['upvote', 'downvote', 'deupvote', 'dedownvote']),
 });

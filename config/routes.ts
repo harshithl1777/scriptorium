@@ -174,6 +174,12 @@ const routesConfiguration: {
             schema: null,
         },
     },
+    '/api/search': {
+        GET: {
+            access: VISITOR,
+            schema: null,
+        },
+    },
 };
 
 export default routesConfiguration;

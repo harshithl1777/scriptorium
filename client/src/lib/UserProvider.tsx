@@ -27,6 +27,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         const posts = user ? user.blogPosts.map((post: BlogPost) => ({ ...post, type: 'Blog Post' })) : [];
         user.resources = [...templates, ...posts];
+
+        const upvotes = {
+            post: [] as number[],
+            comment: [] as number[],
+        };
+        const downvotes = {
+            post: [] as number[],
+            comment: [] as number[],
+        };
+
+        user.UserVote.forEach((vote) => {
+            if (vote.voteType === 'upvote') {
+                upvotes[vote.targetType].push(vote.targetId);
+            } else {
+                downvotes[vote.targetType].push(vote.targetId);
+            }
+        });
+        user.upvotes = upvotes;
+        user.downvotes = downvotes;
         return user;
     };
 
@@ -35,7 +54,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsLoading(true);
             const response = await axios.get(`/api/users/${id}`);
             setUser(formatData(response.data.payload));
-            setIsLoading(false);
         } finally {
             setIsLoading(false);
         }

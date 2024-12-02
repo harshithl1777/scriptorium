@@ -33,7 +33,6 @@ export const SessionProvider: React.FC<{
             await refreshSession();
         } catch {
             setSession({ accessToken: null, isLoggedIn: false });
-        } finally {
             setIsLoading(false);
         }
     };

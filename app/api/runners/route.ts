@@ -5,42 +5,57 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { APIUtils } from '@/utils';
 
-const CONTAINER_NAME = 'jolly_zhukovsky'; // Name of the predefined container
+const CONTAINER_NAME = 'scriptorium'; // Name of the predefined container
 const WORKSPACE_DIR = '/workspace'; // Directory inside the container
 const TIMEOUT_MS = 5000; // Execution timeout in ms
 
-function createTempFile(language: string, code: string): string {
+// Function to create a temporary file locally on the host
+function createTempFileLocally(language: string, code: string): string {
     const tempDir = path.join(process.cwd(), 'temp');
     if (!fs.existsSync(tempDir)) {
         fs.mkdirSync(tempDir, { recursive: true });
     }
+
     const filename = language === 'Java' ? 'Main.java' : `${uuidv4()}.${getFileExtension(language)}`;
     const filePath = path.join(tempDir, filename);
+
     fs.writeFileSync(filePath, code);
 
-    const containerPath = `${WORKSPACE_DIR}/${filename}`;
-    execSync(`docker cp ${filePath} ${CONTAINER_NAME}:${containerPath}`);
-    fs.unlinkSync(filePath); // Clean up the host temp file
-
-    return containerPath;
+    return filePath;
 }
 
-function createTempInputFile(stdin: string): string {
+// Function to copy the file to the Docker container
+function copyFileToContainer(filePath: string, containerPath: string): void {
+    try {
+        execSync(`docker cp "${filePath}" ${CONTAINER_NAME}:${containerPath}`);
+    } catch (error) {
+        console.error('Error copying file to container', error);
+        throw new Error('Failed to copy file to container');
+    }
+}
+
+// Function to clean up the container file after execution
+function cleanupContainerFile(containerFilePath: string): void {
+    execSync(`docker exec ${CONTAINER_NAME} rm -f ${containerFilePath}`);
+}
+
+// Function to create a temporary input file for stdin (with multiple inputs)
+function createTempInputFile(inputs: string[]): string {
     const tempDir = path.join(process.cwd(), 'temp');
     if (!fs.existsSync(tempDir)) {
         fs.mkdirSync(tempDir, { recursive: true });
     }
+
+    // Join multiple inputs with a newline character (or any other separator)
+    const inputData = inputs.join('\n');
     const inputFilename = `${uuidv4()}.txt`;
     const inputFilePath = path.join(tempDir, inputFilename);
-    fs.writeFileSync(inputFilePath, stdin);
+    fs.writeFileSync(inputFilePath, inputData);
 
-    const containerInputPath = `${WORKSPACE_DIR}/${inputFilename}`;
-    execSync(`docker cp ${inputFilePath} ${CONTAINER_NAME}:${containerInputPath}`);
-    fs.unlinkSync(inputFilePath); // Clean up the host temp file
-
-    return containerInputPath;
+    return inputFilePath; // Ensure this file is created locally before copying
 }
 
+// Get file extension based on language
 function getFileExtension(language: string): string {
     switch (language) {
         case 'C':
@@ -68,6 +83,7 @@ function getFileExtension(language: string): string {
     }
 }
 
+// Generate the command based on the language to execute the code
 function getCommand(language: string, filePath: string, inputFilePath: string | null): string {
     const inputRedirection = inputFilePath ? `< ${inputFilePath}` : '';
     switch (language) {
@@ -96,6 +112,7 @@ function getCommand(language: string, filePath: string, inputFilePath: string | 
     }
 }
 
+// Main POST function to handle the code execution request
 export async function POST(req: NextRequest) {
     const body = await req.json();
     const { code, language, stdin } = body;
@@ -106,9 +123,35 @@ export async function POST(req: NextRequest) {
 
     return new Promise((resolve) => {
         try {
-            const filePath = createTempFile(language, code);
-            const inputFilePath = stdin ? createTempInputFile(stdin) : null;
-            const command = getCommand(language, filePath, inputFilePath);
+            // Step 1: Create the temp file locally with the code
+            const localFilePath = createTempFileLocally(language, code);
+
+            // Step 2: Copy the local code file to the container
+            const containerPath = `${WORKSPACE_DIR}/${path.basename(localFilePath)}`;
+            copyFileToContainer(localFilePath, containerPath);
+
+            // (Optional) Clean up the local code file after it's copied
+            fs.unlinkSync(localFilePath);
+
+            // Step 3: Create an input file if stdin is provided
+            let inputFilePath: string | null = null;
+            if (stdin && Array.isArray(stdin)) {
+                inputFilePath = createTempInputFile(stdin); // stdin is an array of multiple inputs
+            }
+
+            // Step 4: Copy the input file to the container if it exists
+            if (inputFilePath) {
+                const inputContainerPath = `${WORKSPACE_DIR}/${path.basename(inputFilePath)}`;
+                copyFileToContainer(inputFilePath, inputContainerPath);
+                fs.unlinkSync(inputFilePath); // Clean up the local input file
+            }
+
+            // Step 5: Prepare the command to execute the code
+            const command = getCommand(
+                language,
+                containerPath,
+                inputFilePath ? `${WORKSPACE_DIR}/${path.basename(inputFilePath)}` : null,
+            );
 
             const startTime = Date.now();
 
@@ -119,8 +162,9 @@ export async function POST(req: NextRequest) {
                     const endTime = Date.now();
                     const timeTaken = endTime - startTime;
 
-                    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-                    if (inputFilePath && fs.existsSync(inputFilePath)) fs.unlinkSync(inputFilePath);
+                    // Step 6: Clean up files in the container
+                    cleanupContainerFile(containerPath);
+                    if (inputFilePath) cleanupContainerFile(`${WORKSPACE_DIR}/${path.basename(inputFilePath)}`);
 
                     const response = {
                         stdout: stdout.trim(),

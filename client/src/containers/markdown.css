@@ -1,0 +1,33 @@
+.markdown > * {
+    all: revert;
+}
+
+/* Explicit styles for inline code */
+.markdown code {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+    font-size: 14px;
+    font-family: monospace;
+}
+
+.markdown pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    font-size: 14px;
+}
+
+.maxHeight {
+    max-height: calc(100vh - 64px);
+}
+
+.markdown a {
+    color: #0090ff;
+}
+
+.markdown a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}

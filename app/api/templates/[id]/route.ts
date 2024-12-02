@@ -10,7 +10,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     try {
         const template = await prisma.codeTemplate.findUnique({
             where: { id: templateId },
-            include: { tags: true },
+            include: { blogPosts: true, tags: true },
         });
 
         if (!template) {

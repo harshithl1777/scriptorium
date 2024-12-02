@@ -13,6 +13,18 @@ export interface User {
     comments: Comment[];
     reports: Report[];
     UserVote: UserVote[];
+    upvotes: {
+        post: number[];
+        comment: number[];
+    };
+    downvotes: {
+        post: number[];
+        comment: number[];
+    };
+    condensedReports: {
+        post: number[];
+        comment: number[];
+    };
 }
 
 export interface CodeTemplate {
@@ -85,8 +97,8 @@ export interface UserVote {
     id: number;
     userId: number;
     targetId: number;
-    targetinterface: string;
-    voteinterface: string;
+    targetType: 'post' | 'comment';
+    voteType: 'upvote' | 'downvote';
     user: User;
 }
 
@@ -110,3 +122,26 @@ export interface CreateResourceState {
     tags: string[];
     language: string;
 }
+
+export interface UpdatePostState {
+    title: string;
+    description: string;
+    content: string;
+    tags: string[];
+    templateIds: string[];
+    upvotes: number;
+    downvotes: number;
+}
+
+export type Language =
+    | 'C'
+    | 'C++'
+    | 'Python'
+    | 'Java'
+    | 'JavaScript'
+    | 'PHP'
+    | 'Go'
+    | 'Swift'
+    | 'Ruby'
+    | 'Rust'
+    | 'Markdown';

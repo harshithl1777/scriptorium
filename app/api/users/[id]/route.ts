@@ -41,6 +41,7 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
                     },
                 },
                 reports: true,
+                UserVote: true,
             },
         });
 
