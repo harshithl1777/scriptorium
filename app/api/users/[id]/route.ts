@@ -38,6 +38,7 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
                         description: true,
                         content: true,
                         tags: true,
+                        isHidden: true,
                     },
                 },
                 reports: true,

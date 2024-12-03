@@ -91,7 +91,11 @@ export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
         header: 'Title',
         cell: ({ row }) => (
             <div
-                className='hover:underline hover:underline-offset-4 hover:cursor-pointer'
+                className={
+                    row.getValue('type') === 'Blog Post' && (row.original as BlogPost).isHidden!
+                        ? 'hover:underline hover:underline-offset-4 hover:cursor-pointer text-amber-600'
+                        : 'hover:underline hover:underline-offset-4 hover:cursor-pointer'
+                }
                 onClick={() =>
                     window.open(
                         '/app/editor/' +
@@ -100,7 +104,18 @@ export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
                     )
                 }
             >
-                {row.getValue('title')}
+                {row.getValue('type') === 'Blog Post' && (row.original as BlogPost).isHidden! ? (
+                    <Tooltip>
+                        <TooltipTrigger className='text-start hover:underline underline-offset-4'>
+                            {row.getValue('title')}
+                        </TooltipTrigger>
+                        <TooltipContent side='bottom'>
+                            This post has been hidden due to an inappropriate content report.
+                        </TooltipContent>
+                    </Tooltip>
+                ) : (
+                    row.getValue('title')
+                )}
             </div>
         ),
     },
