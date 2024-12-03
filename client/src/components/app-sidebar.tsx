@@ -90,10 +90,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {session!.isLoggedIn ? (
                             <NavUser
                                 user={{
+                                    id: user!.id.toString(),
                                     email: user!.email,
                                     name: user!.firstName + ' ' + user!.lastName,
                                     avatar: user!.avatarURL || '',
                                     admin: user!.isAdmin,
+                                    phoneNumber: user?.phoneNumber || ''
                                 }}
                             />
                         ) : (
