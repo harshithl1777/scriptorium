@@ -54,6 +54,7 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const title = url.searchParams.get('title');
     const tags = url.searchParams.get('tags');
+    const language = url.searchParams.get('language');
     const content = url.searchParams.get('content');
     const page = parseInt(url.searchParams.get('page') || '1', 10);
     const limit = parseInt(url.searchParams.get('limit') || '10', 10);
@@ -62,6 +63,7 @@ export async function GET(req: NextRequest) {
     const filters = {
         AND: [
             title ? { title: { contains: title } } : {},
+            language ? { language: { equals: language } } : {},
             content
                 ? {
                       OR: [{ description: { contains: content } }, { code: { contains: content } }],

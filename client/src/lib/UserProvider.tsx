@@ -53,7 +53,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             setIsLoading(true);
             const response = await axios.get(`/api/users/${id}`);
-            setUser(formatData(response.data.payload));
+            await setUser(formatData(response.data.payload));
         } finally {
             setIsLoading(false);
         }

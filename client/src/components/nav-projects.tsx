@@ -12,7 +12,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 const unselectedTextColors = {
     library: 'text-cyan-800 dark:text-cyan-300/70',
     editor: 'text-teal-800 dark:text-teal-300/70',
-    templates: 'text-blue-800 dark:text-blue-300/70',
+    templates: 'text-blue-600 dark:text-blue-400/80',
     posts: 'text-emerald-800 dark:text-emerald-300/70',
     reports: 'text-red-800 dark:text-red-300/70',
 };

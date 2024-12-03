@@ -165,7 +165,7 @@ const CommandEmpty = forwardRef<HTMLDivElement, React.ComponentProps<typeof Comm
 
 CommandEmpty.displayName = 'CommandEmpty';
 
-export const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorProps>(
+const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorProps>(
     (
         {
             value,
@@ -353,7 +353,7 @@ export const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSe
             const Item = (
                 <CommandItem
                     value={inputValue}
-                    className='cursor-pointer m-1'
+                    className='cursor-pointer'
                     onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -369,7 +369,7 @@ export const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSe
                         onChange?.(newOptions);
                     }}
                 >
-                    {`Add "${inputValue}"`}
+                    {`Create "${inputValue}"`}
                 </CommandItem>
             );
 
@@ -379,7 +379,7 @@ export const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSe
             }
 
             // For async search creatable. avoid showing creatable item before loading at first.
-            if (onSearch && debouncedSearchTerm.length > 0 && !isLoading && !(inputValue in options)) {
+            if (onSearch && debouncedSearchTerm.length > 0 && !isLoading) {
                 return Item;
             }
 
@@ -477,7 +477,7 @@ export const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSe
                                         }}
                                         onClick={() => handleUnselect(option)}
                                     >
-                                        <X className='h-3 w-3 text-white hover:text-foreground' />
+                                        <X className='h-3 w-3 text-muted-foreground hover:text-foreground' />
                                     </button>
                                 </Badge>
                             );
@@ -514,23 +514,6 @@ export const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSe
                                 inputProps?.className,
                             )}
                         />
-                        <button
-                            type='button'
-                            onClick={() => {
-                                setSelected(selected.filter((s) => s.fixed));
-                                onChange?.(selected.filter((s) => s.fixed));
-                            }}
-                            className={cn(
-                                'absolute right-0 h-6 w-6 p-0',
-                                (hideClearAllButton ||
-                                    disabled ||
-                                    selected.length < 1 ||
-                                    selected.filter((s) => s.fixed).length === selected.length) &&
-                                    'hidden',
-                            )}
-                        >
-                            <X className='h-4 w-4 ml-auto text-slate-400' />
-                        </button>
                     </div>
                 </div>
                 <div className='relative'>
@@ -601,3 +584,4 @@ export const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSe
 );
 
 MultipleSelector.displayName = 'MultipleSelector';
+export default MultipleSelector;

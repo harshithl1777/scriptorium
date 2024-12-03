@@ -55,11 +55,13 @@ import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { generateEmptyStringObject } from '@/utils/common';
-import TagsSelector from '@/components/tags-selector';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePosts } from '@/lib/PostsProvider';
 import { useTemplates } from '@/lib/TemplatesProvider';
 import { useToast } from '@/hooks/use-toast';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { useTags } from '@/lib/TagsProvider';
+import MultipleSelector from '@/components/ui/multi-selector';
 
 export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
     {
@@ -70,7 +72,7 @@ export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
                 <Tooltip>
                     <TooltipTrigger
                         className={`p-2 rounded-md ${
-                            row.getValue('type') === 'Blog Post' ? 'bg-emerald-700' : 'bg-sky-600'
+                            row.getValue('type') === 'Blog Post' ? 'bg-emerald-700' : 'bg-blue-800'
                         }`}
                     >
                         {row.getValue('type') === 'Blog Post' ? (
@@ -115,16 +117,16 @@ export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
             const tags = row.original.tags;
             return (
                 <div className='text-right font-medium flex flex-row gap-2 items-center'>
-                    {tags.slice(0, 2).map((tag) => (
+                    {tags.slice(0, 2).map((tag, index) => (
                         <Badge
                             className={
                                 row.getValue('type') === 'Blog Post'
                                     ? 'font-normal hover:bg-emerald-700 bg-emerald-700'
-                                    : 'font-normal hover:bg-sky-700 bg-sky-700'
+                                    : 'font-normal hover:bg-blue-800 bg-blue-800'
                             }
                             key={templateID + tag.id}
                         >
-                            {tag.name}
+                            {index === 1 && tag.name.length > 9 ? tag.name.slice(0, 8) + '...' : tag.name}
                         </Badge>
                     ))}
                     <HoverCard>
@@ -135,7 +137,7 @@ export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
                                     className={
                                         row.getValue('type') === 'Blog Post'
                                             ? 'font-normal w-fit hover:bg-emerald-700 bg-emerald-700'
-                                            : 'font-normal w-fit hover:bg-sky-700 bg-sky-700'
+                                            : 'font-normal w-fit hover:bg-blue-800 bg-blue-800'
                                     }
                                     key={templateID + tag.id}
                                 >
@@ -211,6 +213,7 @@ export function LibraryTable() {
     const { isLoading: postsLoading, createPost } = usePosts();
     const { isLoading: templatesLoading, createTemplate } = useTemplates();
     const { toast } = useToast();
+    const { tags, fetchTags } = useTags();
 
     const [pageIndex, setPageIndex] = React.useState(0);
     const [pageSize, setPageSize] = React.useState(5);
@@ -241,6 +244,14 @@ export function LibraryTable() {
             },
         },
     });
+
+    React.useEffect(() => {
+        const conditionallyFetchTags = async () => {
+            if (!tags) await fetchTags();
+        };
+
+        conditionallyFetchTags();
+    }, []);
 
     const handleCreateResourceFormSubmit = async () => {
         try {
@@ -294,12 +305,12 @@ export function LibraryTable() {
                                     required
                                     value={createResourceFormState.title}
                                     disabled={usersLoading || postsLoading || templatesLoading}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
                                         setCreateResourceFormState({
                                             ...createResourceFormState,
                                             title: e.target.value,
-                                        })
-                                    }
+                                        });
+                                    }}
                                     className='focus:!ring-cyan-600'
                                 />
                             </div>
@@ -327,12 +338,17 @@ export function LibraryTable() {
                                 <div className='flex items-center'>
                                     <Label htmlFor='tags'>Tags</Label>
                                 </div>
-                                <TagsSelector
-                                    disabled={usersLoading || postsLoading || templatesLoading}
-                                    onChange={(tags) =>
-                                        setCreateResourceFormState({ ...createResourceFormState, tags })
-                                    }
-                                    className='focus:!ring-cyan-600'
+                                <MultipleSelector
+                                    placeholder='Enter a tag name in lowercase...'
+                                    hidePlaceholderWhenSelected
+                                    creatable
+                                    maxSelected={5}
+                                    onChange={(options) => {
+                                        setCreateResourceFormState({
+                                            ...createResourceFormState,
+                                            tags: options.map((option) => option.value),
+                                        });
+                                    }}
                                 />
                             </div>
                             {dialogState.type === 'Code Template' && (
@@ -425,7 +441,7 @@ export function LibraryTable() {
                                 return (
                                     <DropdownMenuCheckboxItem
                                         key={size}
-                                        className='capitalize'
+                                        className='capitalize hover:!bg-cyan-600'
                                         checked={pageSize === size}
                                         onClick={() => setPageSize(size)}
                                     >
@@ -449,7 +465,7 @@ export function LibraryTable() {
                                     return (
                                         <DropdownMenuCheckboxItem
                                             key={column.id}
-                                            className='capitalize'
+                                            className='capitalize hover:!bg-cyan-600'
                                             checked={column.getIsVisible()}
                                             onCheckedChange={(value) => column.toggleVisibility(!!value)}
                                         >

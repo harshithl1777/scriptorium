@@ -1,2 +1,0 @@
-def mergeSort():
-  return "merge"

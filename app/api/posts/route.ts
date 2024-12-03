@@ -1,65 +1,101 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/config';
 import { APIUtils } from '@/utils';
-import { BlogPost, User } from '@prisma/client';
-import { ExtendedBlogPost } from '@/types/models';
+import { User } from '@prisma/client';
 
 export async function GET(req: NextRequest) {
-    const { searchParams } = new URL(req.url);
-    const search = searchParams.get('search') || '';
-    const tags = searchParams.get('tags') || '';
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '10', 10);
-    const sort = searchParams.get('sort') || 'best';
+    const url = new URL(req.url);
+    const title = url.searchParams.get('title');
+    const tags = url.searchParams.get('tags');
+    const content = url.searchParams.get('content');
+    const sort = url.searchParams.get('sort') || 'best';
+    const page = parseInt(url.searchParams.get('page') || '1', 10);
+    const limit = parseInt(url.searchParams.get('limit') || '10', 10);
+    const includeParam = url.searchParams.get('include');
 
-    const filters: any = {
+    const includePosts = !includeParam || includeParam.includes('post');
+    const includeComments = !includeParam || includeParam.includes('comment');
+
+    const postFilters = {
         AND: [
-            search
+            title ? { title: { contains: title } } : {},
+            content
                 ? {
-                      OR: [
-                          { title: { contains: search } },
-                          { content: { contains: search } },
-                          { templates: { some: { title: { contains: search } } } },
-                          { tags: { some: { name: { contains: search } } } },
-                      ],
+                      OR: [{ description: { contains: content } }, { content: { contains: content } }],
                   }
                 : {},
-            tags ? { tags: { some: { name: { in: tags.split(',') } } } } : {},
-            { isHidden: false },
+            tags
+                ? {
+                      tags: {
+                          some: {
+                              name: { in: tags.split(',') },
+                          },
+                      },
+                  }
+                : {},
         ],
     };
 
+    const commentFilters = {
+        AND: [title ? { title: { contains: title } } : {}, content ? { content: { contains: content } } : {}],
+    };
+
     try {
-        const totalPosts = await prisma.blogPost.count({ where: filters });
+        const [totalPosts, totalComments, posts, comments] = await Promise.all([
+            includePosts ? prisma.blogPost.count({ where: postFilters }) : Promise.resolve(0),
+            includeComments ? prisma.comment.count({ where: commentFilters }) : Promise.resolve(0),
+            includePosts
+                ? prisma.blogPost.findMany({
+                      where: postFilters,
+                      include: { tags: true, templates: true, author: true },
+                  })
+                : Promise.resolve([]),
+            includeComments
+                ? prisma.comment.findMany({
+                      where: commentFilters,
+                      include: { author: true },
+                  })
+                : Promise.resolve([]),
+        ]);
 
-        const posts = await prisma.blogPost.findMany({
-            where: filters,
-            include: { tags: true, templates: true, author: true },
-            take: limit,
-            skip: (page - 1) * limit,
-        });
-
-        const sortedPosts = posts
-            .map((post: BlogPost) => ({
+        // Combine results
+        const combinedResults = [
+            ...posts.map((post: any) => ({
                 ...post,
+                type: 'post',
                 netUpvotes: post.upvotes - post.downvotes,
                 absDifference: Math.abs(post.upvotes - post.downvotes),
-            }))
-            .sort((a: ExtendedBlogPost, b: ExtendedBlogPost) => {
-                if (sort === 'controversial') {
-                    return a.absDifference - b.absDifference;
-                }
-                return b.netUpvotes - a.netUpvotes;
-            });
+            })),
+            ...comments.map((comment: any) => ({
+                ...comment,
+                type: 'comment',
+                netUpvotes: comment.upvotes - comment.downvotes,
+                absDifference: Math.abs(comment.upvotes - comment.downvotes),
+            })),
+        ];
+
+        // Sort combined results
+        const sortedResults = combinedResults.sort((a, b) => {
+            if (sort === 'controversial') {
+                return a.absDifference - b.absDifference;
+            }
+            return b.netUpvotes - a.netUpvotes;
+        });
+
+        const startIndex = (page - 1) * limit;
+        const paginatedResults = sortedResults.slice(startIndex, startIndex + limit);
+
+        const totalPages = Math.ceil(sortedResults.length / limit);
 
         return APIUtils.createNextResponse({
             success: true,
             status: 200,
             payload: {
-                data: sortedPosts,
+                data: paginatedResults,
                 pagination: {
-                    totalPosts,
-                    page,
+                    totalItems: totalPosts + totalComments,
+                    totalPages,
+                    currentPage: page,
                     limit,
                 },
             },

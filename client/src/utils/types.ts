@@ -123,6 +123,21 @@ export interface CreateResourceState {
     language: string;
 }
 
+export interface SearchTemplatesState {
+    title: string;
+    content: string;
+    tags: string[];
+    language: Language;
+}
+
+export interface SearchPostsCommentsState {
+    title: string;
+    content: string;
+    tags: string[];
+    include: ('posts' | 'comments')[];
+    sort: 'best' | 'controversial';
+}
+
 export interface UpdatePostState {
     title: string;
     description: string;
@@ -145,3 +160,23 @@ export type Language =
     | 'Ruby'
     | 'Rust'
     | 'Markdown';
+
+export interface Pagination {
+    totalTemplates: number;
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+}
+
+export interface FusedBlogPostComment {
+    id: number;
+    title?: string;
+    description?: string;
+    content?: string;
+    tags?: Tag[];
+    blogPostId?: number;
+    type: 'post' | 'comment';
+    netUpvotes: number;
+    author?: User;
+}

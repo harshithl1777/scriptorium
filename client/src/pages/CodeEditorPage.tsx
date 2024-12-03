@@ -23,7 +23,6 @@ const CodeEditorPage = () => {
             setTimeout(async () => {
                 try {
                     const template = await getTemplateByID(id as string);
-
                     if (template!.authorId !== user!.id) throw new Error();
 
                     setTemplate(template);

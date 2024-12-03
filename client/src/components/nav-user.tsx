@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronsUpDown, HammerIcon, LogOut, Sparkles } from 'lucide-react';
+import { ChevronsUpDown, HammerIcon, LogOut, ShieldCheck, Sparkles } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -15,6 +15,8 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { useSession } from '@/lib/SessionProvider';
 import { useNavigate } from 'react-router-dom';
+import { Badge } from './ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 export function NavUser({
     user,
@@ -23,6 +25,7 @@ export function NavUser({
         name: string;
         email: string;
         avatar: string;
+        admin: boolean;
     };
 }) {
     const { isMobile } = useSidebar();
@@ -43,12 +46,24 @@ export function NavUser({
                             size='lg'
                             className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
                         >
-                            <Avatar className='h-8 w-8 rounded-lg'>
-                                <AvatarImage src={user.avatar} alt={user.name} />
-                                <AvatarFallback className='rounded-lg bg-indigo-500 text-slate-100 dark:text-slate-900'>
-                                    {user.name.split(' ')[0][0] + user.name.split(' ')[1][0]}
-                                </AvatarFallback>
-                            </Avatar>
+                            {!user.admin ? (
+                                <Avatar className='h-8 w-8 rounded-lg'>
+                                    <AvatarImage src={user.avatar} alt={user.name} />
+                                    <AvatarFallback className='rounded-lg bg-indigo-500 text-slate-100 dark:text-slate-900'>
+                                        {user.name.split(' ')[0][0] + user.name.split(' ')[1][0]}
+                                    </AvatarFallback>
+                                </Avatar>
+                            ) : (
+                                <Tooltip>
+                                    <TooltipTrigger>
+                                        <div className='p-2 rounded-lg flex items-center justify-center bg-orange-500 text-slate-100 dark:text-slate-900'>
+                                            <ShieldCheck size={20} />
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Admin</TooltipContent>
+                                </Tooltip>
+                            )}
+
                             <div className='grid flex-1 text-left text-sm leading-tight'>
                                 <span className='truncate font-semibold'>{user.name}</span>
                                 <span className='truncate text-xs'>{user.email}</span>
@@ -64,14 +79,27 @@ export function NavUser({
                     >
                         <DropdownMenuLabel className='p-0 font-normal'>
                             <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
-                                <Avatar className='h-8 w-8 rounded-lg'>
-                                    <AvatarImage src={user.avatar} alt={user.name} />
-                                    <AvatarFallback className='rounded-lg text-slate-100 bg-indigo-500 dark:text-slate-900'>
-                                        {user.name.split(' ')[0][0] + user.name.split(' ')[1][0]}
-                                    </AvatarFallback>
-                                </Avatar>
+                                {!user.admin ? (
+                                    <Avatar className='h-8 w-8 rounded-lg'>
+                                        <AvatarImage src={user.avatar} alt={user.name} />
+                                        <AvatarFallback className='rounded-lg bg-indigo-500 text-slate-100 dark:text-slate-900'>
+                                            {user.name.split(' ')[0][0] + user.name.split(' ')[1][0]}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                ) : (
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <div className='p-2 rounded-lg flex items-center justify-center bg-orange-500 text-slate-100 dark:text-slate-900'>
+                                                <ShieldCheck size={20} />
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Admin</TooltipContent>
+                                    </Tooltip>
+                                )}
                                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                                    <span className='truncate font-semibold'>{user.name}</span>
+                                    <div>
+                                        <span className='truncate font-semibold'>{user.name}</span>
+                                    </div>
                                     <span className='truncate text-xs'>{user.email}</span>
                                 </div>
                             </div>

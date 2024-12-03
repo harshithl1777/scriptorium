@@ -1,10 +1,29 @@
 import React, { createContext, useContext, useState } from 'react';
 import axios from 'axios';
-import { BlogPost, CreateResourceState } from '@/utils/types'; // Ensure types are defined
+import { BlogPost, CreateResourceState, FusedBlogPostComment, Pagination } from '@/utils/types'; // Ensure types are defined
 import { useUser } from '@/lib/UserProvider';
 
 type BlogPostsContextType = {
     isLoading: boolean;
+    posts: FusedBlogPostComment[];
+    pagination: Pagination | null;
+    searchPosts: ({
+        title,
+        content,
+        tags,
+        sort,
+        include,
+        page,
+        limit,
+    }: {
+        title: string;
+        content: string;
+        tags: string[];
+        sort: 'best' | 'controversial';
+        include: ('posts' | 'comments')[];
+        page: number;
+        limit: number;
+    }) => Promise<void>;
     getPostByID: (id: string) => Promise<BlogPost | null>;
     updatePost: (post: BlogPost) => Promise<BlogPost>;
     createPost: (data: CreateResourceState) => Promise<void>;
@@ -13,8 +32,49 @@ type BlogPostsContextType = {
 const BlogPostsContext = createContext<BlogPostsContextType | undefined>(undefined);
 
 export const PostsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [posts, setPosts] = useState<FusedBlogPostComment[]>([]);
+    const [pagination, setPagination] = useState<Pagination | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const { user, getUserByID } = useUser();
+
+    const searchPosts = async ({
+        title,
+        content,
+        tags,
+        sort,
+        include,
+        page,
+        limit,
+    }: {
+        title: string;
+        content: string;
+        tags: string[];
+        sort: 'best' | 'controversial';
+        include: ('posts' | 'comments')[];
+        page: number;
+        limit: number;
+    }): Promise<void> => {
+        setIsLoading(true);
+        try {
+            const queryParams = new URLSearchParams({
+                title,
+                content,
+                sort,
+                include: include.join(','),
+                tags: tags.join(','),
+                page: page.toString(),
+                limit: limit.toString(),
+            });
+
+            const response = await axios.get(`/api/posts?${queryParams.toString()}`);
+            const postsResponse = response.data.payload.data;
+            const paginationResponse = response.data.payload.pagination;
+            setPagination(paginationResponse);
+            setPosts(postsResponse);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const getPostByID = async (id: string): Promise<BlogPost | null> => {
         setIsLoading(true);
@@ -61,7 +121,9 @@ export const PostsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     return (
-        <BlogPostsContext.Provider value={{ isLoading, getPostByID, updatePost, createPost }}>
+        <BlogPostsContext.Provider
+            value={{ isLoading, posts, pagination, searchPosts, getPostByID, updatePost, createPost }}
+        >
             {children}
         </BlogPostsContext.Provider>
     );

@@ -72,10 +72,9 @@ const PostsPage = () => {
             return setTimeout(async () => {
                 try {
                     const post = await getPostByID(id as string);
-
-                    if (post!.isHidden) throw new Error();
-
                     await getSession();
+
+                    if (post!.isHidden && (!user || user.id !== post!.authorId)) throw new Error();
 
                     setPost(post);
                 } catch {
