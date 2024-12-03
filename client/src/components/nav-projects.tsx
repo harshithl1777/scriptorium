@@ -59,7 +59,7 @@ export function NavProjects({
                             <SidebarMenuButton
                                 asChild
                                 className={
-                                    pathname.includes(name) || (name === 'library' && pathname.includes('editor'))
+                                    pathname === item.url || (name === 'library' && pathname.includes('editor'))
                                         ? BgColors[name]
                                         : BgColorsHover[name]
                                 }
@@ -68,16 +68,14 @@ export function NavProjects({
                                     <item.icon
                                         size={30}
                                         className={
-                                            pathname.includes(name) ||
-                                            (name === 'library' && pathname.includes('editor'))
+                                            pathname === item.url || (name === 'library' && pathname.includes('editor'))
                                                 ? 'text-slate-100 dark:text-slate-900'
                                                 : unselectedTextColors[name]
                                         }
                                     />
                                     <span
                                         className={
-                                            pathname.includes(name) ||
-                                            (name === 'library' && pathname.includes('editor'))
+                                            pathname === item.url || (name === 'library' && pathname.includes('editor'))
                                                 ? 'text-slate-100 dark:text-slate-900  font-medium'
                                                 : unselectedTextColors[name]
                                         }

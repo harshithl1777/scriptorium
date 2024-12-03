@@ -9,7 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@prisma/client": "^5.22.0",
+        "@prisma/client": "^6.0.1",
         "@prisma/studio": "^0.503.0",
         "@radix-ui/colors": "^3.0.0",
         "@radix-ui/react-label": "^2.1.0",

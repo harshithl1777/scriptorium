@@ -5,6 +5,7 @@ type Breadcrumb = {
     label: string;
     path: string;
     language?: Language;
+    fork?: boolean;
 };
 
 interface SiteContextType {

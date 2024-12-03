@@ -9,7 +9,7 @@ interface GatewayProps {
 }
 
 const Gateway: React.FC<GatewayProps> = ({ children }) => {
-    const redirectURL = useQuery('redirect') || '/app/templates';
+    const redirectURL = useQuery('redirect') || '/app/library';
     const { session, isLoading, getSession } = useSession();
     const [showLoader, setShowLoader] = useState(true);
 

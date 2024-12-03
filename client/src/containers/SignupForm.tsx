@@ -39,7 +39,7 @@ export function SignupForm() {
     };
 
     return (
-        <Card className='mx-auto w-[500px] !mt-10'>
+        <Card className='mx-auto w-[500px] !mt-10 bg-gray-900'>
             <CardHeader>
                 <CardTitle className='text-2xl'>Sign Up</CardTitle>
                 <CardDescription>Welcome to Blaze! Enter your details below to get started.</CardDescription>

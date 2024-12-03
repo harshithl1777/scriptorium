@@ -81,7 +81,7 @@ const routesConfiguration: {
         },
         POST: {
             access: USER,
-            schema: TemplatesValidationSchema,
+            schema: null,
         },
         PUT: {
             access: USER,

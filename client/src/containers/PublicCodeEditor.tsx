@@ -6,7 +6,7 @@ import { EditorView } from '@codemirror/view';
 import { CodeTemplate } from '@/utils/types';
 import { useTheme } from '@/lib/ThemeProvider';
 import { Button } from '@/components/ui/button';
-import { Loader2, PlayIcon, SaveIcon, Share2Icon, TextCursorInputIcon } from 'lucide-react';
+import { GitFork, Loader2, PlayIcon, SaveIcon, Share2Icon, TextCursorInputIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTemplates } from '@/lib/TemplatesProvider';
 import { useEffect, useState } from 'react';
@@ -22,6 +22,9 @@ import {
 import { Separator } from '@radix-ui/react-separator';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useSession } from '@/lib/SessionProvider';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '@/lib/UserProvider';
 
 const customDarkBackgroundOverride = EditorView.theme(
     {
@@ -70,7 +73,7 @@ const customLightBackgroundOverride = EditorView.theme(
     { dark: true },
 );
 
-function formatTime(timeTaken) {
+function formatTime(timeTaken: number) {
     if (timeTaken >= 1000) {
         // Convert to seconds with one decimal place
         return (timeTaken / 1000).toFixed(1) + ' s';
@@ -80,9 +83,12 @@ function formatTime(timeTaken) {
     }
 }
 
-const CodeEditor = ({ template }: { template: CodeTemplate }) => {
+const PublicCodeEditor = ({ template }: { template: CodeTemplate }) => {
+    const navigate = useNavigate();
     const { theme } = useTheme();
     const { toast } = useToast();
+    const { session } = useSession();
+    const { user, getUserByID } = useUser();
     const [code, setCode] = useState(template.code);
     const [input, setInput] = useState('');
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -91,9 +97,8 @@ const CodeEditor = ({ template }: { template: CodeTemplate }) => {
         success: null,
         runtime: null,
     });
-
-    const { isLoading, updateTemplate } = useTemplates();
     const [runnerLoading, setRunnerLoading] = useState(false);
+    const [forkLoading, setForkLoading] = useState(false);
     const [osInfo, setOSInfo] = useState('Retrieving OS Info...');
 
     const isDark = theme === 'dark';
@@ -142,17 +147,24 @@ const CodeEditor = ({ template }: { template: CodeTemplate }) => {
         }
     };
 
-    const saveTemplateSubmit = async () => {
+    const forkSubmit = async () => {
         try {
-            const updatedTemplate = await updateTemplate({ ...template, code });
-            setCode(updatedTemplate.code);
-            toast({ title: 'Template saved!' });
+            setForkLoading(true);
+            const response = await axios.post('/api/templates/' + template!.id);
+            toast({
+                title: 'Template Forked!',
+                description: 'This template has now been forked! Redirecting you to your personal editor..',
+            });
+            await getUserByID(user!.id);
+            navigate('/app/editor/templates/' + response.data.payload.id);
         } catch {
             toast({
-                title: 'Unable to save template',
-                description: 'Something went wrong. Please try again later.',
+                title: 'Fork Failed',
+                description: 'Something went wrong. Please try again later',
                 variant: 'destructive',
             });
+        } finally {
+            setForkLoading(false);
         }
     };
 
@@ -213,7 +225,7 @@ const CodeEditor = ({ template }: { template: CodeTemplate }) => {
                         variant='secondary'
                         className='bg-teal-600 dark:bg-teal-700/20 text-white dark:text-teal-400 font-medium rounded-lg hover:bg-teal-500 dark:hover:bg-teal-700/30'
                         onClick={runCode}
-                        disabled={runnerLoading}
+                        disabled={runnerLoading || forkLoading}
                     >
                         {runnerLoading && <Loader2 className='animate-spin' />}
                         {!runnerLoading && <PlayIcon />}
@@ -222,7 +234,7 @@ const CodeEditor = ({ template }: { template: CodeTemplate }) => {
                     <Button
                         variant='secondary'
                         className='bg-blue-500 dark:bg-blue-700/20 text-white dark:text-blue-400 font-medium rounded-lg hover:bg-blue-400 dark:hover:bg-blue-700/30'
-                        disabled={isLoading}
+                        disabled={runnerLoading}
                         onClick={() => setDialogOpen(true)}
                     >
                         <TextCursorInputIcon />
@@ -231,12 +243,43 @@ const CodeEditor = ({ template }: { template: CodeTemplate }) => {
                     <Button
                         variant='secondary'
                         className='bg-orange-500 dark:bg-orange-700/20 text-white dark:text-orange-400 font-medium rounded-lg hover:bg-orange-400 dark:hover:bg-orange-700/30'
-                        disabled={isLoading}
-                        onClick={saveTemplateSubmit}
+                        disabled={forkLoading}
+                        onClick={() => {
+                            if (session?.isLoggedIn && user) {
+                                if (user.id === template.authorId) {
+                                    toast({
+                                        title: 'Template Already Owned',
+                                        description:
+                                            "Since you already own this template, you won't be able to fork it.",
+                                        variant: 'destructive',
+                                    });
+                                } else {
+                                    forkSubmit();
+                                }
+                            } else {
+                                toast({
+                                    title: 'Account Required',
+                                    description: "In order to fork or save code templates, you'll need an account!",
+                                    action: (
+                                        <Button
+                                            variant='outline'
+                                            className='bg-indigo-500 border-indigo-200'
+                                            onClick={() =>
+                                                (window.location.href =
+                                                    '/auth/signup' + '?redirect=/templates/' + template.id)
+                                            }
+                                        >
+                                            Sign Up
+                                        </Button>
+                                    ),
+                                    className: '!bg-indigo-500',
+                                });
+                            }
+                        }}
                     >
-                        {isLoading && <Loader2 className='animate-spin' />}
-                        {!isLoading && <SaveIcon />}
-                        {isLoading ? 'Saving' : 'Save'}
+                        {forkLoading && <Loader2 className='animate-spin' />}
+                        {!forkLoading && <GitFork />}
+                        {forkLoading ? 'Forking' : 'Fork'}
                     </Button>
                     <Button
                         variant='secondary'
@@ -272,4 +315,4 @@ const CodeEditor = ({ template }: { template: CodeTemplate }) => {
     );
 };
 
-export default CodeEditor;
+export default PublicCodeEditor;

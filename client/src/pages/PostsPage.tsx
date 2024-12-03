@@ -287,8 +287,7 @@ const PostsPage = () => {
                             <div className='w-full h-[80vh] flex flex-col items-center justify-center'>
                                 <h1 className='text-6xl max-w-[800px] text-center font-medium'>{post.title}</h1>
                                 <p className='text-2xl max-w-[750px] text-center !mt-3 font-light'>
-                                    Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in
-                                    hendrerit urna. Pellentesque sit amet sapien.
+                                    {post.description}
                                 </p>
                                 <div className='flex flex-row gap-2 items-center !mt-4'>
                                     {post.tags.map((tag, index) => (

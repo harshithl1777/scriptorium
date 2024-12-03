@@ -22,6 +22,34 @@ export async function POST(req: NextRequest) {
                 avatarURL,
                 phoneNumber,
             },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                avatarURL: true,
+                phoneNumber: true,
+                isAdmin: true,
+                templates: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        tags: true,
+                    },
+                },
+                blogPosts: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        content: true,
+                        tags: true,
+                    },
+                },
+                reports: true,
+                UserVote: true,
+            },
         });
 
         return APIUtils.createNextResponse({ success: true, status: 201, payload: user });

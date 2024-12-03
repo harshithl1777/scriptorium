@@ -27,14 +27,14 @@ export function LoginForm() {
             console.error(error);
             toast({
                 title: 'Login Failed',
-                description: 'Something went wrong. Please try again later.',
+                description: 'Please check your email and password.',
                 variant: 'destructive',
             });
         }
     };
 
     return (
-        <Card className='mx-auto max-w-sm !mt-10'>
+        <Card className='mx-auto max-w-sm !mt-10 bg-gray-900'>
             <CardHeader>
                 <CardTitle className='text-2xl'>Login</CardTitle>
                 <CardDescription>Enter your email below to login to your account.</CardDescription>

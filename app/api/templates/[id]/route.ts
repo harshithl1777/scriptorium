@@ -36,6 +36,67 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;
+    const userHeader = req.headers.get('x-user');
+    const user: User = JSON.parse(userHeader as string);
+
+    if (!user) {
+        return APIUtils.createNextResponse({
+            success: false,
+            status: 401,
+            message: 'Unauthorized: User not authenticated',
+        });
+    }
+
+    const templateId = parseInt(id, 10);
+
+    try {
+        // Fetch the existing template
+        const existingTemplate = await prisma.codeTemplate.findUnique({
+            where: { id: templateId },
+            include: { tags: true },
+        });
+
+        if (!existingTemplate) {
+            return APIUtils.createNextResponse({
+                success: false,
+                status: 404,
+                message: 'Template not found',
+            });
+        }
+
+        // Create a new template (fork) for the user
+        const forkedTemplate = await prisma.codeTemplate.create({
+            data: {
+                title: `${existingTemplate.title} (Fork)`,
+                description: existingTemplate.description,
+                code: existingTemplate.code,
+                authorId: user.id,
+                language: existingTemplate.language,
+                originalId: existingTemplate.id,
+                tags: {
+                    connect: existingTemplate.tags.map((tag) => ({ id: tag.id })),
+                },
+            },
+            include: { tags: true },
+        });
+
+        return APIUtils.createNextResponse({
+            success: true,
+            status: 201,
+            payload: forkedTemplate,
+        });
+    } catch (error: any) {
+        APIUtils.logError(error);
+        return APIUtils.createNextResponse({
+            success: false,
+            status: 500,
+            message: error.toString(),
+        });
+    }
+}
+
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
     const { id } = await params;
     const userHeader = req.headers.get('x-user');

@@ -18,6 +18,8 @@ import { SiteProvider } from '@/lib/SiteProvider';
 import MarkdownEditorPage from '@/pages/MarkdownEditorPage';
 import PostsPage from '@/pages/PostsPage';
 import PostsSearchPage from '@/pages/PostsSearchPage';
+import LandingPage from '@/pages/LandingPage';
+import PublicCodeEditorPage from '@/pages/PublicCodeEditorPage';
 
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -34,7 +36,7 @@ function App() {
                                 <TooltipProvider>
                                     <Router>
                                         <Routes>
-                                            <Route path='/' element={<div>Landing Page</div>} />
+                                            <Route path='/' element={<LandingPage />} />
                                             <Route
                                                 path='/auth/login'
                                                 element={
@@ -54,11 +56,9 @@ function App() {
                                             <Route
                                                 path='/app/posts/search'
                                                 element={
-                                                    <Protected>
-                                                        <Layout>
-                                                            <PostsSearchPage />
-                                                        </Layout>
-                                                    </Protected>
+                                                    <Layout>
+                                                        <PostsSearchPage />
+                                                    </Layout>
                                                 }
                                             />
                                             <Route
@@ -102,13 +102,11 @@ function App() {
                                                 }
                                             />
                                             <Route
-                                                path='/app/templates/:id'
+                                                path='/templates/:id'
                                                 element={
-                                                    <Protected>
-                                                        <Layout>
-                                                            <div>Templates</div>
-                                                        </Layout>
-                                                    </Protected>
+                                                    <Layout>
+                                                        <PublicCodeEditorPage />
+                                                    </Layout>
                                                 }
                                             />
                                             <Route path='/posts/:id' element={<PostsPage />} />
@@ -126,8 +124,19 @@ function App() {
                                             <Route
                                                 path='/404'
                                                 element={
-                                                    <div className='w-full h-full flex items-center justify-center'>
-                                                        404 Not Found
+                                                    <div className='w-full h-[100vh] flex items-center justify-center  flex-col'>
+                                                        <h1 className='text-2xl !mb-4'>Page Not Found.</h1>
+                                                        <h1 className='text-lg'>Looks like you went off course!</h1>
+
+                                                        <h3 className='text-md text-slate-400'>
+                                                            404 Error.{' '}
+                                                            <Link
+                                                                className='underline underline-offset-4 hover:cursor-pointer'
+                                                                to='/app/library'
+                                                            >
+                                                                Head back home?
+                                                            </Link>
+                                                        </h3>
                                                     </div>
                                                 }
                                             />

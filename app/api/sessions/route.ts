@@ -125,12 +125,13 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(_: NextRequest) {
-    const cookieStore = cookies();
-    (await cookieStore).delete(REFRESH_TOKEN_COOKIE_NAME);
+    const cookieStore = await cookies();
+    cookieStore.set(REFRESH_TOKEN_COOKIE_NAME, '', { ...TokenUtils.refreshTokenCookieOptions, expires: new Date(0) });
+    // (await cookieStore).delete(REFRESH_TOKEN_COOKIE_NAME);
 
     return APIUtils.createNextResponse({
         success: true,
-        status: 204,
+        status: 200,
         message: 'Session ended successfully',
     });
 }

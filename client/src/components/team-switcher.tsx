@@ -8,7 +8,7 @@ export function TeamSwitcher() {
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton size='lg' className='hover:!bg-transparent'>
+                        <SidebarMenuButton size='lg' className='hover:!bg-transparent hover:cursor-default'>
                             <div className='flex aspect-square size-8 items-center justify-center rounded-lg'>
                                 <img className='w-8 h-8' src={LogoIcon} alt='Blaze Icon Logo' />
                             </div>

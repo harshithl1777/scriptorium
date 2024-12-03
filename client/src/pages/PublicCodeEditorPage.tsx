@@ -5,17 +5,15 @@ import { useEffect, useState } from 'react';
 import { CodeTemplate, Language } from '@/utils/types';
 import { useToast } from '@/hooks/use-toast';
 import { useSite } from '@/lib/SiteProvider';
-import { useUser } from '@/lib/UserProvider';
-import CodeEditor from '@/containers/CodeEditor';
+import PublicCodeEditor from '@/containers/PublicCodeEditor';
 
-const CodeEditorPage = () => {
+const PublicCodeEditorPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { toast } = useToast();
 
     const { getTemplateByID } = useTemplates();
     const [template, setTemplate] = useState<CodeTemplate | null>(null);
-    const { user } = useUser();
     const { updateBreadcrumbs } = useSite();
 
     useEffect(() => {
@@ -24,17 +22,13 @@ const CodeEditorPage = () => {
                 try {
                     const template = await getTemplateByID(id as string);
 
-                    if (template!.authorId !== user!.id) throw new Error();
-
                     setTemplate(template);
                     updateBreadcrumbs([
-                        { label: 'Library', path: '' },
-                        { label: 'Code Editor', path: '' },
+                        { label: 'Templates', path: '' },
                         {
                             label: template!.title,
                             path: '/app/editor/templates/' + template!.id,
                             language: template!.language as Language,
-                            fork: template!.originalId !== null ? true : false,
                         },
                     ]);
                 } catch (error) {
@@ -54,9 +48,9 @@ const CodeEditorPage = () => {
 
     return (
         <div className='space-y-6 flex w-full items-center justify-center h-full'>
-            {!template ? <Loader2 className='animate-spin' /> : <CodeEditor template={template} />}
+            {!template ? <Loader2 className='animate-spin' /> : <PublicCodeEditor template={template} />}
         </div>
     );
 };
 
-export default CodeEditorPage;
+export default PublicCodeEditorPage;
