@@ -18,6 +18,7 @@ import { SiteProvider } from '@/lib/SiteProvider';
 import MarkdownEditorPage from '@/pages/MarkdownEditorPage';
 import PostsPage from '@/pages/PostsPage';
 import PostsSearchPage from '@/pages/PostsSearchPage';
+import TemplateSerchPage from '@/pages/TemplateSearchPage';
 
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -66,7 +67,7 @@ function App() {
                                                 element={
                                                     <Protected>
                                                         <Layout>
-                                                            <div>Templates Search</div>
+                                                            <TemplateSerchPage />
                                                         </Layout>
                                                     </Protected>
                                                 }
