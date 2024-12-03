@@ -66,12 +66,14 @@ export const columns: ColumnDef<FusedBlogPostComment>[] = [
         accessorKey: 'title',
         header: 'Title / Commenter',
         cell: ({ row }) => (
-            <div
-                className='hover:cursor-pointer flex flex-row gap-2 max-w-[300px]'
-                onClick={() => window.open('/posts/' + row.original.id)}
-            >
+            <div className='flex flex-row gap-2 max-w-[300px]'>
                 {row.getValue('type') === 'post' ? (
-                    <p className='hover:underline hover:underline-offset-4 '>{row.getValue('title')}</p>
+                    <p
+                        className='hover:underline hover:underline-offset-4 hover:cursor-pointer '
+                        onClick={() => window.open('/posts/' + row.original.id)}
+                    >
+                        {row.getValue('title')}
+                    </p>
                 ) : (
                     <div className='flex flex-col gap-[1px]'>
                         {row.original.author?.firstName + ' ' + row.original.author?.lastName}

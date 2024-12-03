@@ -33,7 +33,7 @@ const loggedInData = {
     admin: [
         {
             name: 'Reports',
-            url: '/account/reports',
+            url: '/admin/reports',
             icon: FlagIcon,
         },
     ],
@@ -95,7 +95,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                     name: user!.firstName + ' ' + user!.lastName,
                                     avatar: user!.avatarURL || '',
                                     admin: user!.isAdmin,
-                                    phoneNumber: user?.phoneNumber || ''
+                                    phoneNumber: user?.phoneNumber || '',
                                 }}
                             />
                         ) : (

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,10 +15,12 @@ export function LoginForm() {
     const [loginState, setLoginState] = useState<CreateSessionState>(initialState as CreateSessionState);
     const { createSession } = useSession();
     const { toast } = useToast();
+    const navigate = useNavigate();
 
     const handleLoginFormSubmit = async () => {
         try {
             await createSession(loginState);
+            navigate('/app/library');
             toast({
                 title: 'Welcome back to Blaze!',
                 description: "You're now logged in. Happy coding!",

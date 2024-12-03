@@ -160,15 +160,33 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     }
 }
 
-export async function PATCH(_: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
     const { id } = await params;
-    try {
-        const updatedPost = await prisma.blogPost.update({
-            where: { id: parseInt(id, 10) },
-            data: { isHidden: true },
-        });
+    const body = await req.json();
+    const { type } = body;
 
-        return APIUtils.createNextResponse({ success: true, status: 200, payload: updatedPost });
+    try {
+        if (!['post', 'comment'].includes(type)) {
+            return APIUtils.createNextResponse({
+                success: false,
+                status: 400,
+                message: 'Type must be of post or comment',
+            });
+        }
+
+        if (type === 'post') {
+            await prisma.blogPost.update({
+                where: { id: parseInt(id, 10) },
+                data: { isHidden: true },
+            });
+        } else {
+            await prisma.comment.update({
+                where: { id: parseInt(id, 10) },
+                data: { isHidden: true },
+            });
+        }
+
+        return APIUtils.createNextResponse({ success: true, status: 200 });
     } catch (error: any) {
         APIUtils.logError(error);
         return APIUtils.createNextResponse({ success: false, status: 500, message: error.toString() });

@@ -221,7 +221,8 @@ const PostsPage = () => {
                                     <Label htmlFor='stdin'>Reason</Label>
                                     <Textarea
                                         id='stdin'
-                                        placeholder={'My stdin'}
+                                        placeholder={'Enter in some comments here'}
+                                        minLength={5}
                                         required
                                         value={reason}
                                         onChange={(e) => setReason(e.target.value)}

@@ -72,7 +72,7 @@ export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
                 <Tooltip>
                     <TooltipTrigger
                         className={`p-2 rounded-md ${
-                            row.getValue('type') === 'Blog Post' ? 'bg-emerald-700' : 'bg-blue-800'
+                            row.getValue('type') === 'Blog Post' ? 'bg-emerald-700' : 'bg-blue-600'
                         }`}
                     >
                         {row.getValue('type') === 'Blog Post' ? (
@@ -122,7 +122,7 @@ export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
     {
         accessorKey: 'description',
         header: 'Description',
-        cell: ({ row }) => <div>{row.getValue('description')}</div>,
+        cell: ({ row }) => <div className='max-w-[400px]'>{row.getValue('description')}</div>,
     },
     {
         accessorKey: 'tags',

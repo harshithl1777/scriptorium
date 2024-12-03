@@ -194,32 +194,30 @@ const seed = async () => {
             title: 'Understanding For Loops in Programming',
             description:
                 'A detailed guide to understanding and using for loops in programming across different languages.',
-            content: `# Understanding For Loops in Programming
+            content: `For loops are one of the most fundamental control structures in programming. They allow you to repeat a block of code a specific number of times. In this post, we’ll explore how for loops work in several languages, and provide examples to help you master this concept.
 
-		For loops are one of the most fundamental control structures in programming. They allow you to repeat a block of code a specific number of times. In this post, we’ll explore how for loops work in several languages, and provide examples to help you master this concept.
+## Basic Structure of a For Loop
 
-		## Basic Structure of a For Loop
+A for loop typically follows the pattern:
 
-		A for loop typically follows the pattern:
+\`\`\`
+for (initialization; condition; increment) {
+    // code to be executed
+}
+\`\`\`
 
-		\`\`\`
-		for (initialization; condition; increment) {
-			// code to be executed
-		}
-		\`\`\`
+This structure is simple, but incredibly powerful. By mastering for loops, you can solve a variety of problems, from processing arrays to handling repetitive tasks.
 
-		This structure is simple, but incredibly powerful. By mastering for loops, you can solve a variety of problems, from processing arrays to handling repetitive tasks.
+## Example in Python
 
-		## Example in Python
+Let's see an example in Python:
 
-		Let's see an example in Python:
+\`\`\`python
+for i in range(5):
+    print(i)
+\`\`\`
 
-		\`\`\`python
-		for i in range(5):
-			print(i)
-		\`\`\`
-
-		For loops are versatile and form the backbone of many algorithms.`,
+For loops are versatile and form the backbone of many algorithms.`,
             authorId: 1,
             comments: [
                 {
@@ -243,20 +241,18 @@ const seed = async () => {
             title: 'How to Use Arrays in JavaScript',
             description:
                 'Learn how to work with arrays in JavaScript, one of the most essential data structures in programming.',
-            content: `# How to Use Arrays in JavaScript
+            content: `Arrays are one of the most essential data structures in programming. They allow you to store a collection of items in a single variable. In JavaScript, arrays are dynamic and can hold elements of any type, including other arrays or objects.
 
-		Arrays are one of the most essential data structures in programming. They allow you to store a collection of items in a single variable. In JavaScript, arrays are dynamic and can hold elements of any type, including other arrays or objects.
+  ## Example: Basic Array in JavaScript
 
-		## Example: Basic Array in JavaScript
+  Here's an example of how you can use arrays in JavaScript:
 
-		Here's an example of how you can use arrays in JavaScript:
+  \`\`\`javascript
+  let numbers = [1, 2, 3, 4];
+  numbers.forEach(num => console.log(num));
+  \`\`\`
 
-		\`\`\`javascript
-		let numbers = [1, 2, 3, 4];
-		numbers.forEach(num => console.log(num));
-		\`\`\`
-
-		Arrays can be used to solve a wide variety of problems, including storing lists of items, processing data, and handling dynamic content in your applications. Understanding how to use arrays efficiently is essential to writing clean, effective code.`,
+  Arrays can be used to solve a wide variety of problems, including storing lists of items, processing data, and handling dynamic content in your applications. Understanding how to use arrays efficiently is essential to writing clean, effective code.`,
             authorId: 2,
             comments: [
                 {
@@ -274,22 +270,20 @@ const seed = async () => {
         {
             title: 'Exploring While Loops in Python',
             description: 'A beginner’s guide to understanding and implementing while loops in Python.',
-            content: `# Exploring While Loops in Python
+            content: `While loops are another important control structure that lets you repeat code as long as a given condition is true. This can be incredibly useful when you don't know beforehand how many times you need to repeat a task.
 
-		While loops are another important control structure that lets you repeat code as long as a given condition is true. This can be incredibly useful when you don't know beforehand how many times you need to repeat a task.
+## Example: While Loop in Python
 
-		## Example: While Loop in Python
+Here's a simple while loop example in Python:
 
-		Here's a simple while loop example in Python:
+\`\`\`python
+i = 0
+while i < 5:
+    print(i)
+    i += 1
+\`\`\`
 
-		\`\`\`python
-		i = 0
-		while i < 5:
-			print(i)
-			i += 1
-		\`\`\`
-
-		The condition \`i < 5\` ensures the loop will continue running until \`i\` reaches 5. It's important to always ensure that your loop will eventually terminate to prevent infinite loops.`,
+The condition \`i < 5\` ensures the loop will continue running until \`i\` reaches 5. It's important to always ensure that your loop will eventually terminate to prevent infinite loops.`,
             authorId: 3,
             comments: [
                 {
@@ -310,20 +304,20 @@ const seed = async () => {
                 'Learn the basics of string manipulation in JavaScript, including common string methods and techniques.',
             content: `# Basic String Manipulation in JavaScript
 
-		String manipulation is a fundamental skill in programming, and JavaScript provides a wide array of methods for handling strings. From simple operations like concatenation to more complex tasks like pattern matching, string manipulation is essential for any developer.
+String manipulation is a fundamental skill in programming, and JavaScript provides a wide array of methods for handling strings. From simple operations like concatenation to more complex tasks like pattern matching, string manipulation is essential for any developer.
 
-		## Example: String Concatenation in JavaScript
+## Example: String Concatenation in JavaScript
 
-		Here's an example of concatenating strings in JavaScript:
+Here's an example of concatenating strings in JavaScript:
 
-		\`\`\`javascript
-		let str1 = "Hello, ";
-		let str2 = "World!";
-		let result = str1 + str2;
-		console.log(result); // Output: "Hello, World!"
-		\`\`\`
+\`\`\`javascript
+let str1 = "Hello, ";
+let str2 = "World!";
+let result = str1 + str2;
+console.log(result); // Output: "Hello, World!"
+\`\`\`
 
-		There are also many other useful string methods, such as \`.slice()\`, \`.replace()\`, and \`.split()\`, which can help you manipulate text in various ways.`,
+There are also many other useful string methods, such as \`.slice()\`, \`.replace()\`, and \`.split()\`, which can help you manipulate text in various ways.`,
             authorId: 4,
             comments: [
                 {
@@ -342,24 +336,23 @@ const seed = async () => {
             title: 'Exploring the Basics of Recursion in Programming',
             description:
                 'A deep dive into the concept of recursion, a technique often used in algorithms and problem-solving.',
-            content: `# Exploring the Basics of Recursion in Programming
+            content: `Recursion is a method of solving problems where a function calls itself. It’s a powerful technique used in many different areas of programming, including sorting, searching, and even in graphical algorithms.
 
-		Recursion is a method of solving problems where a function calls itself. It’s a powerful technique used in many different areas of programming, including sorting, searching, and even in graphical algorithms.
+### Example: Calculating Factorial Using Recursion in Python
 
-		## Example: Calculating Factorial Using Recursion in Python
+Here's a basic example of recursion in Python, calculating the factorial of a number:
 
-		Here's a basic example of recursion in Python, calculating the factorial of a number:
+\`\`\`python
+def factorial(n):
+  if n == 0:
+    return 1
+  return n * factorial(n-1)
 
-		\`\`\`python
-		def factorial(n):
-			if n == 0:
-				return 1
-			return n * factorial(n-1)
+print(factorial(5))
+# Output: 120
+\`\`\`
 
-		print(factorial(5))  # Output: 120
-		\`\`\`
-
-		Recursion is an important concept, but it’s important to ensure that your recursive function has a base case to prevent infinite recursion.`,
+Recursion is an important concept, but it’s important to ensure that your recursive function has a base case to prevent infinite recursion.`,
             authorId: 5,
             comments: [
                 {

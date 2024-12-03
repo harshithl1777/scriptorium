@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/config';
 import { APIUtils } from '@/utils';
-import { User } from '@prisma/client';
+import { Report, User } from '@prisma/client';
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -14,62 +14,68 @@ export async function GET(req: NextRequest) {
         const includePosts = include.includes('posts');
         const includeComments = include.includes('comments');
 
-        const skip = (page - 1) * limit;
-
-        let reportedContent: Array<any> = [];
+        let posts: any[] = [];
+        let comments: any[] = [];
 
         if (includePosts) {
-            const posts = await prisma.blogPost.findMany({
-                where: { reports: { some: {} } },
+            posts = await prisma.blogPost.findMany({
+                where: {
+                    reports: { some: {} },
+                    isHidden: false, // Exclude hidden posts
+                },
                 include: {
                     author: true,
+                    reports: true, // Include reports to get reasons
                     _count: { select: { reports: true } },
                 },
-                skip,
-                take: limit,
             });
-
-            reportedContent = reportedContent.concat(
-                posts.map((post) => ({
-                    ...post,
-                    reportCount: post._count.reports,
-                    type: 'post',
-                })),
-            );
         }
 
         if (includeComments) {
-            const comments = await prisma.comment.findMany({
-                where: { reports: { some: {} } },
+            comments = await prisma.comment.findMany({
+                where: {
+                    reports: { some: {} },
+                    isHidden: false, // Exclude hidden comments
+                },
                 include: {
                     author: true,
+                    reports: true, // Include reports to get reasons
                     _count: { select: { reports: true } },
                 },
-                skip,
-                take: limit,
             });
-
-            reportedContent = reportedContent.concat(
-                comments.map((comment) => ({
-                    ...comment,
-                    reportCount: comment._count.reports,
-                    type: 'comment',
-                })),
-            );
         }
 
+        // Merge posts and comments, marking their types
+        let reportedContent = [
+            ...posts.map((post) => ({
+                ...post,
+                reportCount: post._count.reports,
+                type: 'post',
+            })),
+            ...comments.map((comment) => ({
+                ...comment,
+                reportCount: comment._count.reports,
+                type: 'comment',
+            })),
+        ];
+
+        // Sort by report count descending
         reportedContent.sort((a, b) => b.reportCount - a.reportCount);
+
+        // Calculate total items for pagination
+        const totalItems = reportedContent.length;
+
+        // Apply pagination
+        const paginatedContent = reportedContent.slice((page - 1) * limit, page * limit);
+
+        const totalPages = Math.ceil(totalItems / limit);
 
         return APIUtils.createNextResponse({
             success: true,
             status: 200,
             payload: {
-                ...reportedContent,
-                pagination: {
-                    page,
-                    limit,
-                    totalItems: reportedContent.length,
-                },
+                data: paginatedContent,
+                pagination: { totalPages, currentPage: page, limit, totalItems },
             },
         });
     } catch (error: any) {

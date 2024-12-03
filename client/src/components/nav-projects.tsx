@@ -14,21 +14,21 @@ const unselectedTextColors = {
     editor: 'text-teal-800 dark:text-teal-300/70',
     templates: 'text-blue-600 dark:text-blue-400/80',
     posts: 'text-emerald-800 dark:text-emerald-300/70',
-    reports: 'text-red-800 dark:text-red-300/70',
+    reports: 'text-rose-800 dark:text-rose-300/70',
 };
 
 const BgColors = {
     library: 'bg-cyan-600 hover:bg-cyan-600 dark:bg-cyan-500 dark:hover:bg-cyan-500',
     templates: 'bg-blue-600 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-500',
     posts: 'bg-emerald-600 hover:bg-emerald-600 dark:bg-emerald-500 dark:hover:bg-emerald-500',
-    reports: 'bg-red-600 hover:bg-red-600 dark:bg-red-500 dark:hover:bg-red-500',
+    reports: 'bg-rose-600 hover:bg-rose-600 dark:bg-rose-500 dark:hover:bg-rose-500',
 };
 
 const BgColorsHover = {
     library: 'hover:bg-cyan-500/20',
     templates: 'hover:bg-blue-500/20',
     posts: 'hover:bg-emerald-500/10',
-    reports: 'hover:bg-red-500/20',
+    reports: 'hover:bg-rose-500/20',
 };
 
 export function NavProjects({

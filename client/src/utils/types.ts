@@ -81,9 +81,10 @@ export interface Comment {
     downvotes: number;
 }
 
-export interface Report {
+export interface ResourceReport {
     id: number;
     reason: string;
+    content: string;
     createdAt: Date;
     reporter: User;
     reporterId: number;
@@ -91,6 +92,9 @@ export interface Report {
     blogPostId?: number | null;
     comment?: Comment | null;
     commentId?: number | null;
+    type: 'post' | 'comment';
+    reportCount: number;
+    reports: ReportContent[];
 }
 
 export interface UserVote {
@@ -100,6 +104,15 @@ export interface UserVote {
     targetType: 'post' | 'comment';
     voteType: 'upvote' | 'downvote';
     user: User;
+}
+
+export interface ReportContent {
+    id: number;
+    reason: string;
+    createdAt: string | Date; // You can use Date if you're working with Date objects
+    reporterId: number;
+    blogPostId: number | null;
+    commentId: number | null;
 }
 
 export interface CreateUserState {
@@ -136,6 +149,10 @@ export interface SearchPostsCommentsState {
     tags: string[];
     include: ('posts' | 'comments')[];
     sort: 'best' | 'controversial';
+}
+
+export interface SearchReportsState {
+    include: ('posts' | 'comments')[];
 }
 
 export interface UpdatePostState {

@@ -27,6 +27,7 @@ type BlogPostsContextType = {
     getPostByID: (id: string) => Promise<BlogPost | null>;
     updatePost: (post: BlogPost) => Promise<BlogPost>;
     createPost: (data: CreateResourceState) => Promise<void>;
+    hidePostByID: (id: number, type: 'post' | 'comment') => Promise<void>;
 };
 
 const BlogPostsContext = createContext<BlogPostsContextType | undefined>(undefined);
@@ -120,9 +121,19 @@ export const PostsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
     };
 
+    const hidePostByID = async (id: number, type: 'post' | 'comment'): Promise<void> => {
+        setIsLoading(true);
+        try {
+            await axios.patch(`/api/posts/${id}`, { type });
+            setPosts((prevPosts) => prevPosts.map((post) => (post.id === id ? { ...post, isHidden: true } : post)));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <BlogPostsContext.Provider
-            value={{ isLoading, posts, pagination, searchPosts, getPostByID, updatePost, createPost }}
+            value={{ isLoading, posts, pagination, searchPosts, getPostByID, updatePost, createPost, hidePostByID }}
         >
             {children}
         </BlogPostsContext.Provider>
