@@ -267,7 +267,7 @@ const seed = async () => {
                 {
                     content: 'Yes, you can nest arrays in JavaScript. For example: let nestedArray = [[1, 2], [3, 4]];',
                     authorId: 6,
-                    parentId: 5,
+                    parentId: 3,
                 },
             ],
         },
@@ -300,7 +300,7 @@ const seed = async () => {
                 {
                     content: "You'll end up with an infinite loop, which can cause your program to freeze or crash.",
                     authorId: 8,
-                    parentId: 7,
+                    parentId: 5,
                 },
             ],
         },
@@ -334,7 +334,7 @@ const seed = async () => {
                 {
                     content: "Sure! Here's an example: let words = 'apple,banana,orange'.split(',');",
                     authorId: 10,
-                    parentId: 9,
+                    parentId: 7,
                 },
             ],
         },
@@ -371,7 +371,7 @@ const seed = async () => {
                     content:
                         'Recursion is most useful when the problem can be broken down into smaller subproblems that resemble the original problem.',
                     authorId: 12,
-                    parentId: 11,
+                    parentId: 9,
                 },
             ],
         },
@@ -417,11 +417,10 @@ const seed = async () => {
         'Discrimination',
     ];
 
-    // Define blog posts that will receive reports (in this case, blog post IDs 1 and 2)
-    const blogPostIds = [1, 2]; // Only applying reports to blog post IDs 1 and 2
+    const blogPostIds = [3, 3, 3, 5, 5, 1];
+    const commentIds = [2, 2, 3, 3];
 
-    // Create reports for blog posts 1 and 2 with diverse reasons
-    const reports = await prisma.report.createMany({
+    const blogPostReports = await prisma.report.createMany({
         data: blogPostIds.map((blogPostId, index) => {
             return {
                 reason: reportReasons[index % reportReasons.length], // Alternate report reasons
@@ -431,13 +430,24 @@ const seed = async () => {
         }),
     });
 
-    console.log('Reports Created:', reports);
+    const commentReports = await prisma.report.createMany({
+        data: commentIds.map((commentId, index) => {
+            return {
+                reason: reportReasons[index % reportReasons.length],
+                reporterId: ((index + 1) % 20) + 1,
+                commentId,
+            };
+        }),
+    });
+
+    console.log('Blog Post Reports Created:', blogPostReports);
+    console.log('Comment Reports Created:', commentReports);
 
     // Now, let's add upvotes and downvotes for the same blog posts with random totals
     const blogPostUpdates = []; // To track the number of upvotes and downvotes for each post
 
     const userVotes = await prisma.userVote.createMany({
-        data: blogPostIds.flatMap((blogPostId) => {
+        data: [1, 2, 3, 4, 5].flatMap((blogPostId) => {
             const userVotesForPost = [];
             const totalVotes = Math.floor(Math.random() * 16) + 5; // Random between 5 and 20 votes per blog post
             let upvoteCount = 0;
