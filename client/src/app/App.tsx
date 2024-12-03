@@ -20,6 +20,7 @@ import PostsPage from '@/pages/PostsPage';
 import PostsSearchPage from '@/pages/PostsSearchPage';
 import LandingPage from '@/pages/LandingPage';
 import PublicCodeEditorPage from '@/pages/PublicCodeEditorPage';
+import TemplateSearchPage from '@/pages/TemplateSearchPage';
 
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -66,7 +67,7 @@ function App() {
                                                 element={
                                                     <Protected>
                                                         <Layout>
-                                                            <div>Templates Search</div>
+                                                            <TemplateSearchPage />
                                                         </Layout>
                                                     </Protected>
                                                 }

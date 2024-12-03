@@ -1,0 +1,2 @@
+def mergeSort():
+  return "merge"
