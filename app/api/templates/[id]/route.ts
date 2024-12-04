@@ -175,9 +175,10 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     const user: User = JSON.parse(userHeader as string);
     const templateId = parseInt(id, 10);
 
+    // Find the template and check permissions
     const template = await prisma.codeTemplate.findUnique({
         where: { id: templateId },
-        select: { authorId: true },
+        select: { authorId: true, blogPosts: true, tags: true },
     });
 
     if (!template) {
@@ -197,12 +198,28 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     }
 
     try {
+        // Disconnect the template from all linked blog posts
+        await prisma.codeTemplate.update({
+            where: { id: templateId },
+            data: {
+                blogPosts: {
+                    set: [],
+                    disconnect: template.blogPosts.map((blogPost) => ({ id: blogPost.id })),
+                },
+                tags: {
+                    set: [],
+                    disconnect: template.tags.map((tag) => ({ id: tag.id })),
+                },
+            },
+        });
+
+        // Delete the template
         await prisma.codeTemplate.delete({ where: { id: templateId } });
 
         return APIUtils.createNextResponse({
             success: true,
             status: 200,
-            message: 'Template deleted successfully',
+            message: 'Template and linked blog posts disconnected successfully',
         });
     } catch (error: any) {
         APIUtils.logError(error);

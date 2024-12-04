@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState } from 'react';
 import axios from 'axios';
-import { BlogPost, CodeTemplate, CreateUserState, User } from '@/utils/types';
+import { BlogPost, CodeTemplate, CreateUserState, UpdateUserState, User } from '@/utils/types';
 
 type UserContextType = {
     user: User | null;
     isLoading: boolean;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     createUser: (args: CreateUserState) => Promise<void>;
+    updateUser: (args: UpdateUserState) => Promise<void>;
     getUserByID: (id: number) => Promise<void>;
 };
 
@@ -70,8 +71,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const updateUser = async (args: UpdateUserState) => {
+        try {
+            setIsLoading(true);
+            await axios.put(`/api/users/${user!.id}`, args);
+            await getUserByID(user!.id);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <UserContext.Provider value={{ user, isLoading, setUser, createUser, getUserByID }}>
+        <UserContext.Provider value={{ user, isLoading, setUser, createUser, updateUser, getUserByID }}>
             {children}
         </UserContext.Provider>
     );

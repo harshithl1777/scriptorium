@@ -28,6 +28,7 @@ type BlogPostsContextType = {
     updatePost: (post: BlogPost) => Promise<BlogPost>;
     createPost: (data: CreateResourceState) => Promise<void>;
     hidePostByID: (id: number, type: 'post' | 'comment') => Promise<void>;
+    deletePostByID: (id: number) => Promise<void>;
 };
 
 const BlogPostsContext = createContext<BlogPostsContextType | undefined>(undefined);
@@ -131,9 +132,29 @@ export const PostsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
     };
 
+    const deletePostByID = async (id: number): Promise<void> => {
+        setIsLoading(true);
+        try {
+            await axios.delete(`/api/posts/${id}`);
+            await getUserByID(user!.id);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <BlogPostsContext.Provider
-            value={{ isLoading, posts, pagination, searchPosts, getPostByID, updatePost, createPost, hidePostByID }}
+            value={{
+                isLoading,
+                posts,
+                pagination,
+                searchPosts,
+                getPostByID,
+                updatePost,
+                createPost,
+                hidePostByID,
+                deletePostByID,
+            }}
         >
             {children}
         </BlogPostsContext.Provider>

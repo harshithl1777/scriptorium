@@ -25,6 +25,7 @@ type CodeTemplatesContextType = {
     getTemplateByID: (id: string) => Promise<CodeTemplate | null>;
     createTemplate: (data: CreateResourceState) => Promise<void>;
     updateTemplate: (template: CodeTemplate) => Promise<CodeTemplate>;
+    deleteTemplateByID: (id: number) => Promise<void>;
 };
 
 const CodeTemplatesContext = createContext<CodeTemplatesContextType | undefined>(undefined);
@@ -108,6 +109,16 @@ export const TemplatesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
     };
 
+    const deleteTemplateByID = async (id: number): Promise<void> => {
+        setIsLoading(true);
+        try {
+            await axios.delete(`/api/templates/${id}`);
+            await getUserByID(user!.id);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <CodeTemplatesContext.Provider
             value={{
@@ -118,6 +129,7 @@ export const TemplatesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 getTemplateByID,
                 createTemplate,
                 updateTemplate,
+                deleteTemplateByID,
             }}
         >
             {children}

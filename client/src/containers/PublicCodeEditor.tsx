@@ -6,7 +6,19 @@ import { EditorView } from '@codemirror/view';
 import { CodeTemplate } from '@/utils/types';
 import { useTheme } from '@/lib/ThemeProvider';
 import { Button } from '@/components/ui/button';
-import { GitFork, Loader2, PlayIcon, SaveIcon, Share2Icon, TextCursorInputIcon } from 'lucide-react';
+import {
+    Code,
+    GitFork,
+    Link,
+    Loader2,
+    PenLine,
+    PlayIcon,
+    SaveIcon,
+    Share2Icon,
+    TextCursorInputIcon,
+    TextIcon,
+    TextQuoteIcon,
+} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTemplates } from '@/lib/TemplatesProvider';
 import { useEffect, useState } from 'react';
@@ -25,6 +37,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useSession } from '@/lib/SessionProvider';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/lib/UserProvider';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Badge } from '@/components/ui/badge';
 
 const customDarkBackgroundOverride = EditorView.theme(
     {
@@ -294,6 +308,40 @@ const PublicCodeEditor = ({ template }: { template: CodeTemplate }) => {
                         <Share2Icon />
                         Share
                     </Button>
+
+                    {template && template!.blogPosts.length > 0 && (
+                        <>
+                            <HoverCard>
+                                <HoverCardTrigger>
+                                    <Button
+                                        variant='secondary'
+                                        className={
+                                            'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 rounded-lg'
+                                        }
+                                    >
+                                        <PenLine />
+                                        Posts
+                                    </Button>
+                                </HoverCardTrigger>
+                                <HoverCardContent className='rounded-lg flex flex-row w-fit gap-2 items-center justify-center max-w-[300px] h-fit flex-wrap'>
+                                    {template!.blogPosts.map((blogPost) => (
+                                        <Badge
+                                            className={
+                                                'font-normal w-fit hover:bg-emerald-900 bg-emerald-800 rounded-md hover:cursor-pointer'
+                                            }
+                                            key={template.title}
+                                            onClick={() => window.open('/posts/' + blogPost.id.toString())}
+                                        >
+                                            <TextQuoteIcon size={10} className='mr-2' />{' '}
+                                            {blogPost.title.length > 30
+                                                ? blogPost.title.slice(0, 30) + '...'
+                                                : blogPost.title}
+                                        </Badge>
+                                    ))}
+                                </HoverCardContent>
+                            </HoverCard>
+                        </>
+                    )}
                     {output.runtime && (
                         <div className='py-1 px-2 font-firaCode ml-auto block bg-[#8F6424] text-xs rounded-md'>
                             {formatTime(output.runtime)}

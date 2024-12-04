@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
                         title: true,
                         description: true,
                         tags: true,
+                        language: true,
                     },
                 },
                 blogPosts: {
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
                         description: true,
                         content: true,
                         tags: true,
+                        templates: true,
                     },
                 },
                 reports: true,

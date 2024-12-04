@@ -69,7 +69,7 @@ model Comment {
   createdAt  DateTime  @default(now())
   author     User      @relation(fields: [authorId], references: [id])
   authorId   Int
-  blogPost   BlogPost  @relation(fields: [blogPostId], references: [id])
+  blogPost   BlogPost  @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
   blogPostId Int
   parent     Comment?  @relation("Replies", fields: [parentId], references: [id])
   parentId   Int?

@@ -6,7 +6,18 @@ import { usePosts } from '@/lib/PostsProvider';
 import { useSession } from '@/lib/SessionProvider';
 import { useEffect, useRef, useState } from 'react';
 import { BlogPost } from '@/utils/types';
-import { CalendarDays, Flag, LibrarySquare, Loader2, Reply, ThumbsDown, ThumbsUp } from 'lucide-react';
+import {
+    CalendarDays,
+    Code,
+    CodeSquareIcon,
+    Flag,
+    LibrarySquare,
+    Link,
+    Loader2,
+    Reply,
+    ThumbsDown,
+    ThumbsUp,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
     Dialog,
@@ -22,10 +33,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUser } from '@/lib/UserProvider';
 import axios from 'axios';
-import { useTheme } from '@/lib/ThemeProvider';
 import '@/pages/posts.css';
 import PostContent from '@/containers/PostContent';
 import dayjs from 'dayjs';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 
 const tagClassnames = [
     'bg-rose-500/10 text-rose-400 border-rose-500/40 text-md font-normal px-4 py-1',
@@ -370,6 +381,39 @@ const PostsPage = () => {
                                             )}
                                         </Button>
                                     </div>
+                                    {post && post!.templates.length > 0 && (
+                                        <>
+                                            <Separator orientation='vertical' className='bg-slate-700' />
+                                            <HoverCard>
+                                                <HoverCardTrigger>
+                                                    <Button
+                                                        variant='secondary'
+                                                        className={
+                                                            'bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 rounded-lg text-md'
+                                                        }
+                                                    >
+                                                        <CodeSquareIcon />
+                                                        Links
+                                                    </Button>
+                                                </HoverCardTrigger>
+                                                <HoverCardContent className='rounded-lg flex flex-row w-fit gap-2 items-center justify-center max-w-[300px] h-fit flex-wrap'>
+                                                    {post!.templates.map((template) => (
+                                                        <Badge
+                                                            className={
+                                                                'font-normal w-fit hover:bg-blue-900 bg-blue-800 rounded-md hover:cursor-pointer'
+                                                            }
+                                                            key={template.title}
+                                                            onClick={() =>
+                                                                window.open('/templates/' + template.id.toString())
+                                                            }
+                                                        >
+                                                            <Code size={10} className='mr-2' /> {template.title}
+                                                        </Badge>
+                                                    ))}
+                                                </HoverCardContent>
+                                            </HoverCard>
+                                        </>
+                                    )}
                                     <Separator orientation='vertical' className='bg-slate-700' />
                                     <Button
                                         variant='secondary'
@@ -439,7 +483,8 @@ const PostsPage = () => {
                             </form>
                             {post.comments.map(
                                 (comment) =>
-                                    comment.parentId === null && (
+                                    comment.parentId === null &&
+                                    !comment.isHidden && (
                                         <>
                                             <article
                                                 key={comment.id}
@@ -510,7 +555,8 @@ const PostsPage = () => {
                                             </article>
                                             {post.comments.map(
                                                 (second) =>
-                                                    second.parentId === comment.id && (
+                                                    second.parentId === comment.id &&
+                                                    !second.isHidden && (
                                                         <article
                                                             key={second.id}
                                                             className='p-6 mb-3 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900'

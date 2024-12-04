@@ -29,6 +29,7 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
                         title: true,
                         description: true,
                         tags: true,
+                        language: true,
                     },
                 },
                 blogPosts: {
@@ -39,6 +40,7 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
                         content: true,
                         tags: true,
                         isHidden: true,
+                        templates: true,
                     },
                 },
                 reports: true,

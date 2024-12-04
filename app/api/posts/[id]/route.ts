@@ -120,10 +120,12 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     const { id } = await params;
     const userHeader = req.headers.get('x-user');
     const user: User = JSON.parse(userHeader as string);
+    const postId = parseInt(id, 10);
 
+    // Fetch the blog post with its authorId, related code templates, and comments
     const blogPost = await prisma.blogPost.findUnique({
-        where: { id: parseInt(id, 10) },
-        select: { authorId: true },
+        where: { id: postId },
+        include: { templates: true, comments: true, reports: true }, // Include related code templates and comments
     });
 
     if (!blogPost) {
@@ -134,8 +136,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         });
     }
 
-    const isOwnerOrAdmin = user.id === blogPost.authorId || user.isAdmin;
-    if (!isOwnerOrAdmin) {
+    if (user.id !== blogPost.authorId && !user.isAdmin) {
         return APIUtils.createNextResponse({
             success: false,
             status: 403,
@@ -144,11 +145,39 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     }
 
     try {
-        await prisma.blogPost.delete({ where: { id: parseInt(id, 10) } });
+        const reportIds = blogPost.reports.map((report) => report.id);
+        const commentIds = blogPost.comments.map((comment) => comment.id);
+
+        // Delete all associated comments
+        if (commentIds.length > 0) {
+            await prisma.comment.deleteMany({
+                where: { id: { in: commentIds } },
+            });
+        }
+
+        if (reportIds.length > 0) {
+            await prisma.report.deleteMany({
+                where: { id: { in: reportIds } },
+            });
+        }
+
+        // Disconnect all related code templates
+        await prisma.blogPost.update({
+            where: { id: postId },
+            data: {
+                templates: {
+                    disconnect: blogPost.templates.map((template) => ({ id: template.id })),
+                },
+            },
+        });
+
+        // Delete the blog post
+        await prisma.blogPost.delete({ where: { id: postId } });
+
         return APIUtils.createNextResponse({
             success: true,
             status: 200,
-            message: 'Blog post deleted successfully',
+            message: `Blog post deleted successfully. Disconnected ${blogPost.templates.length} code template(s) and deleted ${blogPost.comments.length} comment(s).`,
         });
     } catch (error: any) {
         APIUtils.logError(error);

@@ -203,8 +203,7 @@ export function ReportsTable() {
 
     React.useEffect(() => {
         const conditionallyFetchResources = async () => {
-            console.log(reports);
-            if (reports.length === 0) await searchReports({ ...searchState, page: pageIndex, limit: pageSize });
+            await searchReports({ ...searchState, page: pageIndex, limit: pageSize });
         };
 
         conditionallyFetchResources();

@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
     };
 
     const commentFilters = {
-        AND: [title ? { title: { contains: title } } : {}, content ? { content: { contains: content } } : {}],
+        AND: [content ? { content: { contains: content } } : {}],
     };
 
     try {

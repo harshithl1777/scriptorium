@@ -39,7 +39,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useUser } from '@/lib/UserProvider';
-import { CodeTemplate, BlogPost, CreateResourceState } from '@/utils/types';
+import { CodeTemplate, BlogPost, CreateResourceState, User } from '@/utils/types';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
@@ -62,150 +62,9 @@ import { useToast } from '@/hooks/use-toast';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { useTags } from '@/lib/TagsProvider';
 import MultipleSelector from '@/components/ui/multi-selector';
-
-export const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
-    {
-        accessorKey: 'type',
-        header: 'Type',
-        cell: ({ row }) => (
-            <div className=''>
-                <Tooltip>
-                    <TooltipTrigger
-                        className={`p-2 rounded-md ${
-                            row.getValue('type') === 'Blog Post' ? 'bg-emerald-700' : 'bg-blue-600'
-                        }`}
-                    >
-                        {row.getValue('type') === 'Blog Post' ? (
-                            <TextCursorIcon className='text-white dark:text-slate-900' size={16} />
-                        ) : (
-                            <Code2Icon className='text-white dark:text-slate-900' size={16} />
-                        )}
-                    </TooltipTrigger>
-                    <TooltipContent side='bottom'>{row.getValue('type')}</TooltipContent>
-                </Tooltip>
-            </div>
-        ),
-    },
-    {
-        accessorKey: 'title',
-        header: 'Title',
-        cell: ({ row }) => (
-            <div
-                className={
-                    row.getValue('type') === 'Blog Post' && (row.original as BlogPost).isHidden!
-                        ? 'hover:underline hover:underline-offset-4 hover:cursor-pointer text-amber-600'
-                        : 'hover:underline hover:underline-offset-4 hover:cursor-pointer'
-                }
-                onClick={() =>
-                    window.open(
-                        '/app/editor/' +
-                            (row.getValue('type') === 'Blog Post' ? 'posts/' : 'templates/') +
-                            row.original.id,
-                    )
-                }
-            >
-                {row.getValue('type') === 'Blog Post' && (row.original as BlogPost).isHidden! ? (
-                    <Tooltip>
-                        <TooltipTrigger className='text-start hover:underline underline-offset-4'>
-                            {row.getValue('title')}
-                        </TooltipTrigger>
-                        <TooltipContent side='bottom'>
-                            This post has been hidden due to an inappropriate content report.
-                        </TooltipContent>
-                    </Tooltip>
-                ) : (
-                    row.getValue('title')
-                )}
-            </div>
-        ),
-    },
-    {
-        accessorKey: 'description',
-        header: 'Description',
-        cell: ({ row }) => <div className='max-w-[400px]'>{row.getValue('description')}</div>,
-    },
-    {
-        accessorKey: 'tags',
-        header: () => <div>Tags</div>,
-        cell: ({ row }) => {
-            const templateID = row.original.id;
-            const tags = row.original.tags;
-            return (
-                <div className='text-right font-medium flex flex-row gap-2 items-center'>
-                    {tags.slice(0, 2).map((tag, index) => (
-                        <Badge
-                            className={
-                                row.getValue('type') === 'Blog Post'
-                                    ? 'font-normal hover:bg-emerald-700 bg-emerald-700'
-                                    : 'font-normal hover:bg-blue-800 bg-blue-800'
-                            }
-                            key={templateID + tag.id}
-                        >
-                            {index === 1 && tag.name.length > 9 ? tag.name.slice(0, 8) + '...' : tag.name}
-                        </Badge>
-                    ))}
-                    <HoverCard>
-                        <HoverCardTrigger>{tags.length > 2 && ` +${tags.length - 2}`}</HoverCardTrigger>
-                        <HoverCardContent className='rounded-lg flex flex-row w-fit gap-2 items-center justify-center max-w-[300px] h-fit flex-wrap'>
-                            {tags.map((tag) => (
-                                <Badge
-                                    className={
-                                        row.getValue('type') === 'Blog Post'
-                                            ? 'font-normal w-fit hover:bg-emerald-700 bg-emerald-700'
-                                            : 'font-normal w-fit hover:bg-blue-800 bg-blue-800'
-                                    }
-                                    key={templateID + tag.id}
-                                >
-                                    {tag.name}
-                                </Badge>
-                            ))}
-                        </HoverCardContent>
-                    </HoverCard>
-                </div>
-            );
-        },
-    },
-    {
-        id: 'actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            const resource = row.original;
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant='ghost' className='h-8 w-8 p-0 hover:bg-cyan-700'>
-                            <span className='sr-only'>Open menu</span>
-                            <MoreHorizontal />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align='end'>
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            className='hover:!bg-cyan-700 hover:pointer'
-                            onClick={() =>
-                                window.open(
-                                    (row.getValue('type') === 'Blog Post' ? '/posts/' : '/templates/') + resource.id,
-                                )
-                            }
-                        >
-                            <Eye />
-                            Open preview
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className='hover:!bg-cyan-700 hover:pointer'>
-                            <PenBoxIcon />
-                            Edit metadata
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className='hover:!bg-red-700 hover:pointer'>
-                            <Trash2Icon />
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        },
-    },
-];
+import { EditProfileDialog } from '@/components/EditProfileDialog';
+import { EditBlogPostDialog } from '@/components/EditPostDialog';
+import { EditCodeTemplateDialog } from '@/components/EditTemplateDialog';
 
 const initialState = generateEmptyStringObject(['title', 'description', 'language']) as {
     title: string;
@@ -225,8 +84,8 @@ export function LibraryTable() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
     const { user, isLoading: usersLoading, getUserByID } = useUser();
-    const { isLoading: postsLoading, createPost } = usePosts();
-    const { isLoading: templatesLoading, createTemplate } = useTemplates();
+    const { isLoading: postsLoading, createPost, deletePostByID } = usePosts();
+    const { isLoading: templatesLoading, createTemplate, deleteTemplateByID } = useTemplates();
     const { toast } = useToast();
     const { tags, fetchTags } = useTags();
 
@@ -236,6 +95,184 @@ export function LibraryTable() {
         ...initialState,
         tags: [],
     });
+    const [editPostDialogPost, setEditPostDialogPost] = React.useState<BlogPost | null>(null);
+    const [editPostDialogOpen, setEditPostDialogOpen] = React.useState(false);
+    const [editTemplateDialogTemplate, setEditTemplateDialogTemplate] = React.useState<CodeTemplate | null>(null);
+    const [editTemplateDialogOpen, setEditTemplateDialogOpen] = React.useState(false);
+    const [deleteResourceDialogState, setDeleteResourceDialogState] = React.useState<{
+        open: boolean;
+        id: number | null;
+        type: 'post' | 'template' | null;
+    }>({
+        open: false,
+        id: null,
+        type: null,
+    });
+
+    const columns: ColumnDef<BlogPost | CodeTemplate>[] = [
+        {
+            accessorKey: 'type',
+            header: 'Type',
+            cell: ({ row }) => (
+                <div className=''>
+                    <Tooltip>
+                        <TooltipTrigger
+                            className={`p-2 rounded-md ${
+                                row.getValue('type') === 'Blog Post' ? 'bg-emerald-700' : 'bg-blue-600'
+                            }`}
+                        >
+                            {row.getValue('type') === 'Blog Post' ? (
+                                <TextCursorIcon className='text-white dark:text-slate-900' size={16} />
+                            ) : (
+                                <Code2Icon className='text-white dark:text-slate-900' size={16} />
+                            )}
+                        </TooltipTrigger>
+                        <TooltipContent side='bottom'>{row.getValue('type')}</TooltipContent>
+                    </Tooltip>
+                </div>
+            ),
+        },
+        {
+            accessorKey: 'title',
+            header: 'Title',
+            cell: ({ row }) => (
+                <div
+                    className={
+                        row.getValue('type') === 'Blog Post' && (row.original as BlogPost).isHidden!
+                            ? 'hover:underline hover:underline-offset-4 hover:cursor-pointer text-amber-600'
+                            : 'hover:underline hover:underline-offset-4 hover:cursor-pointer'
+                    }
+                    onClick={() =>
+                        window.open(
+                            '/app/editor/' +
+                                (row.getValue('type') === 'Blog Post' ? 'posts/' : 'templates/') +
+                                row.original.id,
+                        )
+                    }
+                >
+                    {row.getValue('type') === 'Blog Post' && (row.original as BlogPost).isHidden! ? (
+                        <Tooltip>
+                            <TooltipTrigger className='text-start hover:underline underline-offset-4'>
+                                {row.getValue('title')}
+                            </TooltipTrigger>
+                            <TooltipContent side='bottom'>
+                                This post has been hidden due to an inappropriate content report.
+                            </TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        row.getValue('title')
+                    )}
+                </div>
+            ),
+        },
+        {
+            accessorKey: 'description',
+            header: 'Description',
+            cell: ({ row }) => <div className='max-w-[400px]'>{row.getValue('description')}</div>,
+        },
+        {
+            accessorKey: 'tags',
+            header: () => <div>Tags</div>,
+            cell: ({ row }) => {
+                const templateID = row.original.id;
+                const tags = row.original.tags;
+                return (
+                    <div className='text-right font-medium flex flex-row gap-2 items-center'>
+                        {tags.slice(0, 2).map((tag, index) => (
+                            <Badge
+                                className={
+                                    row.getValue('type') === 'Blog Post'
+                                        ? 'font-normal hover:bg-emerald-700 bg-emerald-700'
+                                        : 'font-normal hover:bg-blue-800 bg-blue-800'
+                                }
+                                key={templateID + tag.id}
+                            >
+                                {index === 1 && tag.name.length > 9 ? tag.name.slice(0, 8) + '...' : tag.name}
+                            </Badge>
+                        ))}
+                        <HoverCard>
+                            <HoverCardTrigger>{tags.length > 2 && ` +${tags.length - 2}`}</HoverCardTrigger>
+                            <HoverCardContent className='rounded-lg flex flex-row w-fit gap-2 items-center justify-center max-w-[300px] h-fit flex-wrap'>
+                                {tags.map((tag) => (
+                                    <Badge
+                                        className={
+                                            row.getValue('type') === 'Blog Post'
+                                                ? 'font-normal w-fit hover:bg-emerald-700 bg-emerald-700'
+                                                : 'font-normal w-fit hover:bg-blue-800 bg-blue-800'
+                                        }
+                                        key={templateID + tag.id}
+                                    >
+                                        {tag.name}
+                                    </Badge>
+                                ))}
+                            </HoverCardContent>
+                        </HoverCard>
+                    </div>
+                );
+            },
+        },
+        {
+            id: 'actions',
+            enableHiding: false,
+            cell: ({ row }) => {
+                const resource = row.original;
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant='ghost' className='h-8 w-8 p-0 hover:bg-cyan-700'>
+                                <span className='sr-only'>Open menu</span>
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align='end'>
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                className='hover:!bg-cyan-700 hover:pointer'
+                                onClick={() =>
+                                    window.open(
+                                        (row.getValue('type') === 'Blog Post' ? '/posts/' : '/templates/') +
+                                            resource.id,
+                                    )
+                                }
+                            >
+                                <Eye />
+                                Open preview
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    if (row.getValue('type') === 'Blog Post') {
+                                        setEditPostDialogPost(row.original as BlogPost);
+                                        setEditPostDialogOpen(true);
+                                    } else {
+                                        setEditTemplateDialogTemplate(row.original as CodeTemplate);
+                                        setEditTemplateDialogOpen(true);
+                                    }
+                                }}
+                                className='hover:!bg-cyan-700 hover:pointer'
+                            >
+                                <PenBoxIcon />
+                                Edit metadata
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    setDeleteResourceDialogState({
+                                        open: true,
+                                        id: row.original.id,
+                                        type: row.getValue('type') === 'Blog Post' ? 'post' : 'template',
+                                    })
+                                }
+                                className='hover:!bg-red-700 hover:pointer'
+                            >
+                                <Trash2Icon />
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                );
+            },
+        },
+    ];
 
     const table = useReactTable({
         data: user ? user.resources : [],
@@ -292,8 +329,87 @@ export function LibraryTable() {
         }
     };
 
+    const deleteResourceSubmit = async () => {
+        try {
+            if (deleteResourceDialogState.type === 'post') {
+                await deletePostByID(deleteResourceDialogState.id as number);
+            } else {
+                await deleteTemplateByID(deleteResourceDialogState.id as number);
+            }
+            toast({
+                title: `${deleteResourceDialogState.type?.at(0)?.toUpperCase()}${deleteResourceDialogState.type?.slice(
+                    1,
+                )} Deleted Successfully`,
+            });
+            setDeleteResourceDialogState({ open: false, id: null, type: null });
+        } catch {
+            toast({
+                title: `Unable to delete ${deleteResourceDialogState.type?.toLowerCase()}`,
+                description: 'Something went wrong. Please try again later.',
+                variant: 'destructive',
+            });
+        }
+    };
+
     return (
         <div className='w-full'>
+            {editTemplateDialogOpen && (
+                <EditCodeTemplateDialog
+                    codeTemplate={editTemplateDialogTemplate!}
+                    isOpen={editTemplateDialogOpen}
+                    onClose={() => {
+                        setEditTemplateDialogOpen(false);
+                        setEditTemplateDialogTemplate(null);
+                    }}
+                />
+            )}
+            {editPostDialogOpen && (
+                <EditBlogPostDialog
+                    blogPost={editPostDialogPost!}
+                    isOpen={editPostDialogOpen}
+                    onClose={() => {
+                        setEditPostDialogOpen(false);
+                        setEditPostDialogPost(null);
+                    }}
+                />
+            )}
+            {deleteResourceDialogState.open && (
+                <Dialog
+                    open={deleteResourceDialogState.open}
+                    onOpenChange={(isOpen) => {
+                        setDeleteResourceDialogState({ open: isOpen, id: null, type: null });
+                    }}
+                >
+                    <DialogContent className='max-w-[600px] sm:max-w-[400px]'>
+                        <DialogHeader>
+                            <DialogTitle className='capitalize'>
+                                Confirm {deleteResourceDialogState.type} Deletion
+                            </DialogTitle>
+                            <DialogDescription>
+                                Are you sure you want to delete this {deleteResourceDialogState.type?.toLowerCase()}?
+                                This action can't be undone.
+                            </DialogDescription>
+                            <Separator className='!mt-4' />
+                        </DialogHeader>
+                        <DialogFooter>
+                            <Button
+                                className='bg-slate-700 hover:bg-slate-600'
+                                onClick={() => setDeleteResourceDialogState({ open: false, id: null, type: null })}
+                            >
+                                Nevermind
+                            </Button>
+                            <Button className='bg-rose-600 hover:bg-rose-500' onClick={deleteResourceSubmit}>
+                                {postsLoading || templatesLoading ? (
+                                    <Loader2 className='animate-spin' />
+                                ) : (
+                                    <Trash2Icon />
+                                )}
+                                {postsLoading || templatesLoading ? 'Deleting' : 'Delete'}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            )}
             <Dialog
                 open={dialogState.open}
                 onOpenChange={(isOpen) => {

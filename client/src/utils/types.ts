@@ -36,6 +36,7 @@ export interface CodeTemplate {
     createdAt: Date;
     author: User;
     authorId: number;
+    blogPosts: BlogPost[];
     originalId?: number | null;
     tags: Tag[];
 }
@@ -106,6 +107,15 @@ export interface UserVote {
     user: User;
 }
 
+export interface Report {
+    id: number;
+    createdAt: Date;
+    reason: string;
+    reporterId: number;
+    blogPostId: number | null;
+    commentId: number | null;
+}
+
 export interface ReportContent {
     id: number;
     reason: string;
@@ -120,6 +130,14 @@ export interface CreateUserState {
     lastName: string;
     email: string;
     password: string;
+    avatarURL?: string | null;
+    phoneNumber?: string | null;
+}
+
+export interface UpdateUserState {
+    email: string;
+    firstName: string;
+    lastName: string;
     avatarURL?: string | null;
     phoneNumber?: string | null;
 }
